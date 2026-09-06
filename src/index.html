@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sciencenopoly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ============================================================ SETUP ==== -->
+<section id="screen-setup" class="screen">
+ <div class="setup-wrap">
+  <div class="setup-card">
+    <div class="brand">
+      <div class="brand-atom" aria-hidden="true">
+        <span class="nucleus"></span>
+        <span class="orbit o1"></span><span class="orbit o2"></span><span class="orbit o3"></span>
+      </div>
+      <div>
+        <h1>SCIENCENOPOLY</h1>
+        <p class="tagline">Media pembelajaran Struktur Atom &amp; Sistem Periodik Unsur &mdash; Kelas&nbsp;10&nbsp;IPA</p>
+      </div>
+    </div>
+
+    <p class="credit">
+      Berdasarkan karya ilmiah <em>Pengembangan Media Pembelajaran &ldquo;Sciencenopoly&rdquo;</em>
+      oleh Harits Abdurahman Aufa &amp; Muhammad Abdan Syakuuron, pembimbing Sari Sri Sukmawati &mdash;
+      SMAI Nurul Fikri Boarding School Serang.
+    </p>
+
+    <div class="field">
+      <label>Jumlah pemain</label>
+      <div class="seg" id="player-count" role="radiogroup" aria-label="Jumlah pemain">
+        <button type="button" data-n="2">2</button>
+        <button type="button" data-n="3">3</button>
+        <button type="button" data-n="4" class="on">4</button>
+      </div>
+      <p class="hint">Moderator dijalankan komputer, jadi semua orang bisa ikut bermain (2&ndash;4 pemain).</p>
+    </div>
+
+    <div class="field">
+      <label>Nama pemain</label>
+      <div id="name-inputs" class="names"></div>
+    </div>
+
+    <div class="setup-actions">
+      <button type="button" id="btn-start" class="btn primary big">Mulai Permainan</button>
+      <button type="button" class="btn ghost" data-panel="rules">Cara Bermain</button>
+      <button type="button" class="btn ghost" data-panel="table">Tabel Periodik</button>
+    </div>
+
+    <p class="handoff-note">
+      Dimainkan bergantian di satu perangkat. Kartu tiap pemain dirahasiakan lewat layar serah&#8209;terima.
+    </p>
+  </div>
+
+  <figure class="preview">
+    <div class="board-frame">
+      <div id="board-preview" class="board"></div>
+    </div>
+    <figcaption>Papan 28 petak, disalin dari papan karton aslinya.</figcaption>
+  </figure>
+ </div>
+</section>
+
+<!-- ============================================================= GAME ==== -->
+<section id="screen-game" class="screen hidden">
+  <header class="topbar">
+    <div class="topbar-title">
+      <strong>SCIENCENOPOLY</strong>
+      <span id="turn-label" class="turn-label"></span>
+    </div>
+    <div class="topbar-actions">
+      <button type="button" class="btn tiny ghost" data-panel="table">Tabel Periodik</button>
+      <button type="button" class="btn tiny ghost" data-panel="rules">Aturan</button>
+      <button type="button" class="btn tiny ghost" id="btn-quit">Keluar</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- ---------------------------------------------------------- papan -->
+    <div class="board-col">
+      <div class="board-frame">
+        <div id="board" class="board"></div>
+      </div>
+    </div>
+
+    <!-- -------------------------------------------------------- samping -->
+    <aside class="side">
+      <div class="panel">
+        <h2>Skor</h2>
+        <ul id="scoreboard" class="scoreboard"></ul>
+      </div>
+
+      <div class="panel">
+        <h2>Meja Moderator</h2>
+        <div id="moderator" class="moderator"></div>
+      </div>
+
+      <div class="panel grow">
+        <h2>Catatan Permainan</h2>
+        <div id="log" class="log"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ---------------------------------------------------- panel tindakan -->
+  <div id="action" class="action"></div>
+</section>
+
+<!-- ========================================================= OVERLAYS ==== -->
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
+  <div id="overlay-box" class="overlay-box"></div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

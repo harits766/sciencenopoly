@@ -1,0 +1,2195 @@
+<title>Sciencenopoly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
+<style>
+/* =========================================================================
+   Sciencenopoly — gaya visual mengikuti papan aslinya (Gambar 2 dokumen):
+   kertas krem, garis tebal hitam, petak merah/ungu/kuning, sudut hijau & tosca.
+   ========================================================================= */
+
+:root {
+  --kertas: #f6f1e4;
+  --kertas-2: #fffdf7;
+  --tinta: #1d1b17;
+  --tinta-2: #5c574c;
+  --garis: #23201c;
+  --panel: #ffffff;
+  --panel-2: #f2ede0;
+  --bayang: 0 2px 0 rgba(35, 32, 28, .18), 0 10px 26px rgba(35, 32, 28, .12);
+
+  --merah: #ef5350;
+  --merah-tua: #b9484d;
+  --ungu: #a763c9;
+  --magenta: #d94f74;
+  --kuning: #f2c14e;
+  --krem: #e8d6a8;
+  --tosca: #58d3dd;
+  --hijau: #58b368;
+  --biru: #7fc7e8;
+  --putih: #fbf8f0;
+
+  --radius: 14px;
+  /* Plus Jakarta Sans: huruf rancangan Tokotype (Jakarta) untuk teks;
+     Archivo Black: huruf tebal bergaya poster untuk judul & angka besar. */
+  --font-teks: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-judul: "Archivo Black", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-synthesis-weight: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --kertas: #1b1a17;
+    --kertas-2: #23211d;
+    --tinta: #f2ede2;
+    --tinta-2: #b3ab99;
+    --garis: #0d0c0a;
+    --panel: #24221e;
+    --panel-2: #2d2a25;
+    --putih: #ded7c8;
+    --krem: #b9a677;
+    --bayang: 0 2px 0 rgba(0, 0, 0, .5), 0 10px 26px rgba(0, 0, 0, .45);
+  }
+}
+
+/* pembaca yang memilih gelap secara eksplisit, walau sistemnya terang */
+:root[data-theme="dark"] {
+  --kertas: #1b1a17;
+  --kertas-2: #23211d;
+  --tinta: #f2ede2;
+  --tinta-2: #b3ab99;
+  --garis: #0d0c0a;
+  --panel: #24221e;
+  --panel-2: #2d2a25;
+  --putih: #ded7c8;
+  --krem: #b9a677;
+  --bayang: 0 2px 0 rgba(0, 0, 0, .5), 0 10px 26px rgba(0, 0, 0, .45);
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--kertas);
+  color: var(--tinta);
+  font: 15px/1.55 var(--font-teks);
+  -webkit-text-size-adjust: 100%;
+}
+
+h1, h2, h3 { margin: 0; line-height: 1.15; text-wrap: balance; }
+h1, .brand h1, .rank .pos, .die, .element-face .sym, .tile .name {
+  font-family: var(--font-judul);
+}
+button { font: inherit; color: inherit; }
+.hidden { display: none !important; }
+
+/* fokus papan ketik selalu terlihat */
+:focus-visible {
+  outline: 3px solid var(--tosca);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------- tombol --- */
+
+.btn {
+  border: 2px solid var(--garis);
+  background: var(--putih);
+  color: var(--tinta);
+  border-radius: 10px;
+  padding: 9px 16px;
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--garis);
+  transition: transform .06s, box-shadow .06s, background .15s;
+}
+.btn:hover { background: var(--kertas-2); }
+.btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--garis); }
+.btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: 0 2px 0 var(--garis); transform: none; }
+.btn.primary { background: var(--hijau); color: #10240f; }
+.btn.warn { background: var(--merah); color: #2a0d0c; }
+.btn.info { background: var(--tosca); color: #06282b; }
+.btn.ghost { background: transparent; box-shadow: none; border-width: 1.5px; font-weight: 600; }
+.btn.big { padding: 13px 26px; font-size: 17px; }
+.btn.tiny { padding: 5px 10px; font-size: 12.5px; border-radius: 8px; box-shadow: none; }
+.btn.block { display: block; width: 100%; text-align: left; }
+
+/* ======================================================= layar setup ==== */
+
+.screen { min-height: 100%; }
+
+#screen-setup {
+  display: grid;
+  place-items: center;
+  padding: 24px 16px 48px;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(88, 211, 221, .18), transparent 60%),
+    var(--kertas);
+}
+
+.setup-wrap {
+  width: min(1140px, 100%);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+  gap: 32px;
+  align-items: center;
+}
+
+.preview { margin: 0; display: grid; gap: 10px; justify-items: center; }
+.preview .board-frame { width: min(100%, 440px); }
+/* pratinjau hanya hiasan: petaknya tidak bisa diklik dan tulisannya diperkecil */
+.preview .board { pointer-events: none; }
+.preview .tile { font-size: 9px; }
+.preview .tile .glyph { font-size: 19px; }
+/* nama petak dikecilkan agar "Pesawat"/"Penjara" tidak terpotong di pratinjau */
+.preview .tile .name { font-size: 7px; letter-spacing: 0; padding-inline: 1px; }
+.preview figcaption { font-size: 12px; color: var(--tinta-2); text-align: center; }
+
+.setup-card {
+  width: min(620px, 100%);
+  background: var(--panel);
+  border: 3px solid var(--garis);
+  border-radius: 20px;
+  box-shadow: var(--bayang);
+  padding: 26px;
+}
+
+.brand { display: flex; align-items: center; gap: 18px; margin-bottom: 12px; }
+
+.brand-atom { position: relative; width: 62px; height: 62px; flex: 0 0 auto; }
+.brand-atom .nucleus {
+  position: absolute; inset: 40%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #7ec8f2, #2a6fa8);
+}
+.brand-atom .orbit {
+  position: absolute; inset: 0;
+  border: 2.5px solid var(--tosca);
+  border-radius: 50%;
+  transform: rotate(0deg) scaleY(.42);
+}
+.brand-atom .o1 { border-color: #ef8354; transform: rotate(0deg) scaleY(.4); }
+.brand-atom .o2 { border-color: #58b368; transform: rotate(60deg) scaleY(.4); }
+.brand-atom .o3 { border-color: #58d3dd; transform: rotate(120deg) scaleY(.4); }
+
+h1 { font-size: clamp(26px, 6vw, 36px); letter-spacing: .06em; }
+.tagline { margin: 4px 0 0; color: var(--tinta-2); font-size: 13.5px; }
+.credit {
+  margin: 0 0 20px; padding: 10px 12px;
+  background: var(--panel-2); border-radius: 10px;
+  font-size: 12.5px; color: var(--tinta-2);
+}
+
+.field { margin-bottom: 18px; }
+.field > label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 13.5px; }
+.hint { margin: 8px 0 0; font-size: 12.5px; color: var(--tinta-2); }
+
+.seg { display: inline-flex; border: 2px solid var(--garis); border-radius: 10px; overflow: hidden; }
+.seg button {
+  border: 0; background: var(--putih); padding: 8px 20px; cursor: pointer; font-weight: 700;
+  border-right: 2px solid var(--garis);
+}
+.seg button:last-child { border-right: 0; }
+.seg button.on { background: var(--tosca); color: #06282b; }
+
+.names { display: grid; gap: 8px; }
+.names .name-row { display: flex; align-items: center; gap: 10px; }
+.names .dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--garis); flex: 0 0 auto; }
+.names input {
+  flex: 1; padding: 9px 12px; border: 2px solid var(--garis); border-radius: 9px;
+  background: var(--kertas-2); color: var(--tinta); font: inherit; min-width: 0;
+}
+
+.setup-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.handoff-note { margin: 16px 0 0; font-size: 12.5px; color: var(--tinta-2); }
+
+/* ======================================================== layar main ==== */
+
+#screen-game { display: flex; flex-direction: column; min-height: 100vh; }
+
+.topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 14px; border-bottom: 2px solid var(--garis);
+  background: var(--panel); position: sticky; top: 0; z-index: 5;
+}
+.topbar-title { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+.topbar-title strong { letter-spacing: .08em; font-size: 15px; }
+.turn-label { font-size: 13px; color: var(--tinta-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar-actions { display: flex; gap: 6px; flex: 0 0 auto; }
+
+.layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 16px;
+  padding: 16px;
+  align-items: start;
+}
+
+.board-col { display: grid; place-items: center; min-width: 0; }
+
+.board-frame {
+  /* sisakan ruang untuk topbar, panel tindakan, dan padding layout */
+  width: min(100%, calc(100vh - 170px));
+  aspect-ratio: 1;
+  background: var(--putih);
+  border: 4px solid var(--garis);
+  border-radius: 8px;
+  padding: 6px;
+  box-shadow: var(--bayang);
+}
+
+.board {
+  width: 100%; height: 100%;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  gap: 2px;
+}
+
+/* ---------------------------------------------------------- petak ------ */
+
+.tile {
+  position: relative;
+  border: 2px solid var(--garis);
+  border-radius: 4px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1px; overflow: hidden; background: var(--putih);
+  font-size: clamp(7px, 1.1vw, 11px);
+  text-align: center; line-height: 1;
+}
+.tile .glyph { font-size: clamp(13px, 2.4vw, 26px); line-height: 1; }
+.tile .name { font-weight: 700; font-size: .85em; letter-spacing: .02em; opacity: .85; }
+.tile .num { position: absolute; top: 1px; left: 3px; font-size: 8px; opacity: .4; font-weight: 700; }
+
+.tile.t-start    { background: var(--hijau); }
+.tile.t-plus     { background: var(--merah); }
+.tile.t-minus    { background: var(--merah); }
+.tile.t-x2       { background: var(--tosca); }
+.tile.t-swap     { background: var(--kuning); }
+.tile.t-question { background: var(--ungu); }
+.tile.t-answer   { background: var(--krem); }
+.tile.t-safe     { background: var(--magenta); }
+.tile.t-skip     { background: var(--merah-tua); }
+.tile.t-jail     { background: var(--merah-tua); }
+.tile.t-reverse  { background: var(--putih); }
+.tile.t-plane    { background: var(--biru); }
+
+.tile.corner { border-width: 3px; }
+.tile.aktif { outline: 3px solid #ffd166; outline-offset: -3px; z-index: 2; }
+
+/* bidak pemain */
+.tokens {
+  position: absolute; inset: auto 2px 2px 2px;
+  display: flex; flex-wrap: wrap; gap: 2px; justify-content: center;
+}
+.token {
+  width: clamp(8px, 1.5vw, 14px); height: clamp(8px, 1.5vw, 14px);
+  border-radius: 50%; border: 2px solid var(--garis);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .35);
+}
+.token.now { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(1.35); } }
+
+/* pusat papan */
+.board-center {
+  grid-column: 2 / 8; grid-row: 2 / 8;
+  border: 2px dashed rgba(35, 32, 28, .25);
+  border-radius: 12px; margin: 4px;
+  display: grid; place-items: center; gap: 6px;
+  padding: 8px; text-align: center;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(88, 211, 221, .16), transparent 62%),
+    var(--kertas-2);
+}
+.center-atom { position: relative; width: clamp(60px, 16vh, 120px); height: clamp(60px, 16vh, 120px); }
+.center-atom .nucleus { position: absolute; inset: 38%; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #7ec8f2, #2a6fa8); }
+.center-atom .orbit { position: absolute; inset: 0; border-radius: 50%; border: 3px solid; }
+.center-atom .o1 { border-color: #ef8354; transform: rotate(0deg) scaleY(.38); }
+.center-atom .o2 { border-color: #58b368; transform: rotate(60deg) scaleY(.38); }
+.center-atom .o3 { border-color: #58d3dd; transform: rotate(120deg) scaleY(.38); }
+
+.decks { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.deck {
+  border: 2px solid var(--garis); border-radius: 8px; padding: 5px 10px;
+  background: var(--panel); font-size: 12px; font-weight: 700;
+  box-shadow: 0 2px 0 var(--garis);
+}
+.deck.q { background: var(--ungu); }
+.deck.a { background: var(--krem); }
+.deck small { display: block; font-weight: 500; opacity: .75; font-size: 10px; }
+
+.dice-tray { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.die {
+  width: clamp(34px, 6vh, 48px); height: clamp(34px, 6vh, 48px);
+  border: 2.5px solid var(--garis); border-radius: 9px; background: var(--panel);
+  display: grid; place-items: center; font-weight: 800;
+  font-size: clamp(15px, 2.6vh, 21px); box-shadow: 0 3px 0 var(--garis);
+}
+.die.element { background: var(--tosca); color: #06282b; }
+.die.rolling { animation: shake .5s ease; }
+@keyframes shake {
+  0%, 100% { transform: rotate(0) translateY(0); }
+  25% { transform: rotate(-14deg) translateY(-7px); }
+  50% { transform: rotate(12deg) translateY(0); }
+  75% { transform: rotate(-8deg) translateY(-4px); }
+}
+.dice-caption { font-size: 11.5px; color: var(--tinta-2); }
+
+/* --------------------------------------------------------- samping ----- */
+
+.side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+.panel {
+  background: var(--panel); border: 2px solid var(--garis);
+  border-radius: var(--radius); padding: 12px; box-shadow: var(--bayang);
+}
+.panel h2 {
+  font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--tinta-2); margin-bottom: 8px;
+}
+.panel.grow { flex: 1; min-height: 160px; }
+
+.scoreboard { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.scoreboard li {
+  display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 9px;
+  padding: 7px 9px; border-radius: 9px; background: var(--panel-2);
+  border: 2px solid transparent;
+}
+.scoreboard li.now { border-color: var(--garis); background: var(--kertas-2); }
+.scoreboard li.done { opacity: .5; }
+.sb-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--garis); }
+.sb-name { font-weight: 700; font-size: 13.5px; }
+.sb-meta { font-size: 11px; color: var(--tinta-2); }
+.sb-score { font-weight: 800; font-size: 18px; font-variant-numeric: tabular-nums; }
+
+.moderator { display: grid; gap: 7px; font-size: 12.5px; }
+.mod-card {
+  border: 2px solid var(--garis); border-radius: 9px; padding: 8px 10px; background: var(--panel-2);
+}
+.mod-card .tag {
+  display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; padding: 2px 6px; border-radius: 5px;
+  background: var(--ungu); margin-bottom: 5px;
+}
+.mod-card.open .tag { background: var(--kuning); }
+.mod-empty { color: var(--tinta-2); font-size: 12px; }
+
+.log { max-height: 34vh; overflow-y: auto; display: grid; gap: 5px; font-size: 12px; }
+.log p { margin: 0; padding: 5px 8px; border-radius: 7px; background: var(--panel-2); }
+.log p.skor { background: rgba(88, 179, 104, .2); }
+.log p.moderator { background: rgba(167, 99, 201, .2); }
+.log p.petak { background: rgba(242, 193, 78, .2); }
+.log p.sistem { background: rgba(88, 211, 221, .22); font-weight: 600; }
+
+/* --------------------------------------------------- panel tindakan ---- */
+
+.action {
+  position: sticky; bottom: 0; z-index: 4;
+  border-top: 3px solid var(--garis); background: var(--panel);
+  padding: 12px 16px; box-shadow: 0 -8px 24px rgba(0, 0, 0, .1);
+}
+.action-inner { max-width: 1100px; margin: 0 auto; display: grid; gap: 10px; }
+.action-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.action-who { font-weight: 800; }
+.action-msg { font-size: 13.5px; color: var(--tinta-2); white-space: pre-wrap; }
+.action-buttons { display: flex; gap: 9px; flex-wrap: wrap; }
+
+/* ------------------------------------------------------------ overlay -- */
+
+.overlay {
+  position: fixed; inset: 0; z-index: 20;
+  background: rgba(20, 18, 15, .62);
+  display: grid; place-items: center; padding: 16px;
+  backdrop-filter: blur(3px);
+}
+.overlay-box {
+  width: min(560px, 100%); max-height: 90vh; overflow-y: auto;
+  background: var(--panel); border: 3px solid var(--garis);
+  border-radius: 18px; box-shadow: var(--bayang); padding: 22px;
+}
+.overlay-box h2 { font-size: 20px; margin-bottom: 6px; }
+.overlay-box .sub { color: var(--tinta-2); font-size: 13px; margin: 0 0 16px; }
+
+/* layar serah-terima */
+.handoff { text-align: center; }
+.handoff .big-dot {
+  width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--garis);
+  margin: 6px auto 14px; box-shadow: var(--bayang);
+}
+.handoff h2 { font-size: 26px; }
+
+/* kartu unsur untuk pertanyaan dadu */
+.element-face {
+  width: 132px; height: 132px; margin: 4px auto 14px;
+  border: 3px solid var(--garis); border-radius: 16px; background: var(--tosca); color: #06282b;
+  display: grid; place-items: center; box-shadow: 0 4px 0 var(--garis);
+}
+.element-face .sym { font-size: 54px; font-weight: 800; line-height: 1; }
+.element-face .cap { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; margin-top: 4px; }
+
+.answer-input {
+  display: flex; gap: 8px; align-items: center; justify-content: center; margin-bottom: 12px;
+}
+.answer-input input {
+  width: 130px; padding: 12px; font-size: 26px; font-weight: 800; text-align: center;
+  border: 3px solid var(--garis); border-radius: 12px; background: var(--kertas-2); color: var(--tinta);
+}
+.keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 14px; }
+.keypad button {
+  padding: 11px 0; border: 2px solid var(--garis); border-radius: 9px;
+  background: var(--putih); font-weight: 800; cursor: pointer;
+}
+.keypad button:active { transform: translateY(1px); }
+
+/* daftar pilihan (klaim, tukar, tujuan pesawat) */
+.choices { display: grid; gap: 8px; margin-bottom: 14px; }
+.choice {
+  text-align: left; width: 100%; padding: 11px 13px;
+  border: 2px solid var(--garis); border-radius: 11px; background: var(--panel-2);
+  cursor: pointer; display: grid; gap: 3px;
+}
+.choice:hover { background: var(--kertas-2); }
+.choice.sel { background: var(--tosca); color: #06282b; }
+.choice .t { font-weight: 700; font-size: 13.5px; }
+.choice .m { font-size: 11.5px; opacity: .8; }
+.choice[disabled] { opacity: .45; cursor: not-allowed; }
+
+.grid-dest { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 6px; margin-bottom: 14px; }
+.grid-dest button {
+  padding: 8px 4px; border: 2px solid var(--garis); border-radius: 9px;
+  background: var(--panel-2); cursor: pointer; font-size: 11px; font-weight: 700;
+  display: grid; gap: 2px; justify-items: center;
+}
+.grid-dest button .g { font-size: 17px; }
+.grid-dest button:hover { background: var(--tosca); }
+
+.overlay-actions { display: flex; gap: 9px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* tabel periodik & aturan */
+.pt {
+  display: grid; grid-template-columns: repeat(18, minmax(0, 1fr));
+  gap: 3px; margin-bottom: 14px;
+}
+.pt .el {
+  border: 1.5px solid var(--garis); border-radius: 4px; padding: 3px 1px;
+  text-align: center; background: var(--panel-2); font-size: 9px; line-height: 1.15;
+}
+.pt .el b { display: block; font-size: 12px; }
+.pt .el i { display: block; font-style: normal; font-size: 7.5px; opacity: .7; }
+.pt .el.g1 { background: #f6d7d7; } /* logam alkali */
+.pt .el.g2 { background: #f8e6c8; } /* alkali tanah */
+.pt .el.gp { background: #d8ecd8; } /* golongan utama p */
+.pt .el.g8 { background: #d5e6f7; } /* gas mulia */
+.pt-legend { font-size: 11.5px; color: var(--tinta-2); display: grid; gap: 3px; }
+
+.rules { font-size: 13px; }
+.rules h3 { font-size: 13px; margin: 16px 0 6px; letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-2); }
+.rules ol, .rules ul { margin: 0; padding-left: 20px; display: grid; gap: 5px; }
+.rules li { line-height: 1.45; }
+.sym-list { list-style: none; padding: 0; display: grid; gap: 6px; }
+.sym-list li { display: grid; grid-template-columns: 34px 1fr; gap: 9px; align-items: start; }
+.sym-list .s {
+  width: 34px; height: 34px; border: 2px solid var(--garis); border-radius: 7px;
+  display: grid; place-items: center; font-size: 17px;
+}
+
+/* hasil akhir */
+.rank { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 7px; }
+.rank li {
+  display: grid; grid-template-columns: 30px 16px 1fr auto; align-items: center; gap: 10px;
+  padding: 10px 12px; border: 2px solid var(--garis); border-radius: 11px; background: var(--panel-2);
+}
+.rank li.champ { background: var(--kuning); }
+.rank .pos { font-weight: 800; font-size: 17px; }
+.rank .pts { font-weight: 800; font-size: 19px; font-variant-numeric: tabular-nums; }
+
+/* -------------------------------------------------------------- kecil -- */
+
+@media (max-width: 940px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .board-frame { width: min(100%, 92vw, calc(100vh - 200px)); }
+  .log { max-height: 22vh; }
+  .side { order: 2; }
+}
+
+@media (max-width: 980px) {
+  .setup-wrap { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .preview { order: -1; }
+  .preview .board-frame { width: min(100%, 320px); }
+}
+
+@media (max-width: 560px) {
+  .setup-card { padding: 18px; }
+  .preview .board-frame { width: min(100%, 260px); }
+  .preview .tile .name { display: none; }
+  .brand { gap: 12px; }
+  .topbar-actions .btn { padding: 5px 8px; font-size: 11.5px; }
+  .pt { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+  .overlay-box { padding: 16px; }
+}
+
+</style>
+<!-- ============================================================ SETUP ==== -->
+<section id="screen-setup" class="screen">
+ <div class="setup-wrap">
+  <div class="setup-card">
+    <div class="brand">
+      <div class="brand-atom" aria-hidden="true">
+        <span class="nucleus"></span>
+        <span class="orbit o1"></span><span class="orbit o2"></span><span class="orbit o3"></span>
+      </div>
+      <div>
+        <h1>SCIENCENOPOLY</h1>
+        <p class="tagline">Media pembelajaran Struktur Atom &amp; Sistem Periodik Unsur &mdash; Kelas&nbsp;10&nbsp;IPA</p>
+      </div>
+    </div>
+
+    <p class="credit">
+      Berdasarkan karya ilmiah <em>Pengembangan Media Pembelajaran &ldquo;Sciencenopoly&rdquo;</em>
+      oleh Harits Abdurahman Aufa &amp; Muhammad Abdan Syakuuron, pembimbing Sari Sri Sukmawati &mdash;
+      SMAI Nurul Fikri Boarding School Serang.
+    </p>
+
+    <div class="field">
+      <label>Jumlah pemain</label>
+      <div class="seg" id="player-count" role="radiogroup" aria-label="Jumlah pemain">
+        <button type="button" data-n="2">2</button>
+        <button type="button" data-n="3">3</button>
+        <button type="button" data-n="4" class="on">4</button>
+      </div>
+      <p class="hint">Moderator dijalankan komputer, jadi semua orang bisa ikut bermain (2&ndash;4 pemain).</p>
+    </div>
+
+    <div class="field">
+      <label>Nama pemain</label>
+      <div id="name-inputs" class="names"></div>
+    </div>
+
+    <div class="setup-actions">
+      <button type="button" id="btn-start" class="btn primary big">Mulai Permainan</button>
+      <button type="button" class="btn ghost" data-panel="rules">Cara Bermain</button>
+      <button type="button" class="btn ghost" data-panel="table">Tabel Periodik</button>
+    </div>
+
+    <p class="handoff-note">
+      Dimainkan bergantian di satu perangkat. Kartu tiap pemain dirahasiakan lewat layar serah&#8209;terima.
+    </p>
+  </div>
+
+  <figure class="preview">
+    <div class="board-frame">
+      <div id="board-preview" class="board"></div>
+    </div>
+    <figcaption>Papan 28 petak, disalin dari papan karton aslinya.</figcaption>
+  </figure>
+ </div>
+</section>
+
+<!-- ============================================================= GAME ==== -->
+<section id="screen-game" class="screen hidden">
+  <header class="topbar">
+    <div class="topbar-title">
+      <strong>SCIENCENOPOLY</strong>
+      <span id="turn-label" class="turn-label"></span>
+    </div>
+    <div class="topbar-actions">
+      <button type="button" class="btn tiny ghost" data-panel="table">Tabel Periodik</button>
+      <button type="button" class="btn tiny ghost" data-panel="rules">Aturan</button>
+      <button type="button" class="btn tiny ghost" id="btn-quit">Keluar</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- ---------------------------------------------------------- papan -->
+    <div class="board-col">
+      <div class="board-frame">
+        <div id="board" class="board"></div>
+      </div>
+    </div>
+
+    <!-- -------------------------------------------------------- samping -->
+    <aside class="side">
+      <div class="panel">
+        <h2>Skor</h2>
+        <ul id="scoreboard" class="scoreboard"></ul>
+      </div>
+
+      <div class="panel">
+        <h2>Meja Moderator</h2>
+        <div id="moderator" class="moderator"></div>
+      </div>
+
+      <div class="panel grow">
+        <h2>Catatan Permainan</h2>
+        <div id="log" class="log"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ---------------------------------------------------- panel tindakan -->
+  <div id="action" class="action"></div>
+</section>
+
+<!-- ========================================================= OVERLAYS ==== -->
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
+  <div id="overlay-box" class="overlay-box"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================= js/data/board.js ================= */
+/**
+ * Papan Sciencenopoly — 28 petak, disalin persis dari foto papan asli
+ * (Gambar 2 pada dokumen penelitian).
+ *
+ * Indeks 0 ada di sudut kiri-atas (START) dan bertambah searah jarum jam:
+ *   0        : START (sudut hijau, kiri-atas)
+ *   1  – 6   : baris atas    →  − + − + − +
+ *   7        : ×2 (sudut kanan-atas)
+ *   8  – 13  : kolom kanan   ↓  tukar, Q, aman, Q, skip, A
+ *   14       : TENGKORAK / penjara (sudut kanan-bawah)
+ *   15 – 20  : baris bawah   ←  skip, aman, A, aman, reverse, Q
+ *   21       : PESAWAT (sudut kiri-bawah)
+ *   22 – 27  : kolom kiri    ↑  tukar, Q, Q, skip, A, aman
+ */
+
+const TILE = {
+  START: 'START',
+  PLUS: 'PLUS',
+  MINUS: 'MINUS',
+  X2: 'X2',
+  SWAP: 'SWAP',
+  QUESTION: 'QUESTION',
+  ANSWER: 'ANSWER',
+  SAFE: 'SAFE',
+  SKIP: 'SKIP',
+  JAIL: 'JAIL',
+  REVERSE: 'REVERSE',
+  PLANE: 'PLANE',
+};
+
+/** Metadata tampilan + penjelasan aturan tiap simbol (poin 1–10 dokumen). */
+const TILE_INFO = {
+  START:    { label: 'START',   icon: '🏁', cls: 'start',    desc: 'Kembali/melewati START: +2 poin.' },
+  PLUS:     { label: 'Plus',    icon: '➕', cls: 'plus',     desc: 'Lempar ulang dadu normal + dadu unsur. Jawaban benar: +angka dadu +2. Salah: +angka dadu saja.' },
+  MINUS:    { label: 'Minus',   icon: '➖', cls: 'minus',    desc: 'Lempar ulang dadu normal + dadu unsur. Jawaban benar: +2 tetapi tetap −angka dadu. Salah: −angka dadu saja.' },
+  X2:       { label: '×2',      icon: '✳️', cls: 'x2',       desc: 'Berapa pun skor (+/−) yang didapat berikutnya akan dikali dua.' },
+  SWAP:     { label: 'Tukar',   icon: '🔄', cls: 'swap',     desc: 'Bebas menukar SEMUA kartumu dengan SEMUA kartu pemain lain.' },
+  QUESTION: { label: 'Q',       icon: '❓', cls: 'question', desc: 'Ambil satu kartu question.' },
+  ANSWER:   { label: 'A',       icon: '🅰️', cls: 'answer',   desc: 'Ambil satu kartu answer.' },
+  SAFE:     { label: 'Aman',    icon: '☮️', cls: 'safe',     desc: 'Titik aman: +1 poin, tidak ada efek buruk.' },
+  SKIP:     { label: 'Skip',    icon: '🚫', cls: 'skip',     desc: 'Pemain berikutnya tidak mendapat giliran.' },
+  JAIL:     { label: 'Penjara', icon: '💀', cls: 'jail',     desc: 'Untuk keluar: bayar 3 poin (tidak boleh sampai minus) atau jawab 2 dadu unsur.' },
+  REVERSE:  { label: 'Reverse', icon: '🔃', cls: 'reverse',  desc: 'Urutan giliran berbalik arah.' },
+  PLANE:    { label: 'Pesawat', icon: '✈️', cls: 'plane',    desc: 'Pindah ke petak mana saja, bayar 2 poin atau jawab 2 dadu unsur dengan benar.' },
+};
+
+const T = TILE;
+
+const BOARD = [
+  T.START,                                                    // 0  sudut kiri-atas
+  T.MINUS, T.PLUS, T.MINUS, T.PLUS, T.MINUS, T.PLUS,          // 1–6  baris atas
+  T.X2,                                                       // 7  sudut kanan-atas
+  T.SWAP, T.QUESTION, T.SAFE, T.QUESTION, T.SKIP, T.ANSWER,   // 8–13 kolom kanan
+  T.JAIL,                                                     // 14 sudut kanan-bawah
+  T.SKIP, T.SAFE, T.ANSWER, T.SAFE, T.REVERSE, T.QUESTION,    // 15–20 baris bawah
+  T.PLANE,                                                    // 21 sudut kiri-bawah
+  T.SWAP, T.QUESTION, T.QUESTION, T.SKIP, T.ANSWER, T.SAFE,   // 22–27 kolom kiri
+];
+
+const BOARD_SIZE = BOARD.length; // 28
+
+/** Posisi tiap petak pada grid CSS 8×8 (baris, kolom mulai dari 1). */
+function gridPos(i) {
+  if (i <= 7) return { row: 1, col: i + 1 };                 // baris atas, kiri→kanan
+  if (i <= 13) return { row: i - 6, col: 8 };                // kolom kanan, atas→bawah
+  if (i === 14) return { row: 8, col: 8 };                   // sudut kanan-bawah
+  if (i <= 20) return { row: 8, col: 8 - (i - 14) };         // baris bawah, kanan→kiri
+  if (i === 21) return { row: 8, col: 1 };                   // sudut kiri-bawah
+  return { row: 8 - (i - 21), col: 1 };                      // kolom kiri, bawah→atas
+}
+
+/* ================= js/data/elements.js ================= */
+/**
+ * Dadu unsur — 3 buah, masing-masing 6 sisi (dokumen: "3 dadu unsur dan 1 dadu normal").
+ * Sisi dadu memakai unsur nomor atom 1–20, yaitu cakupan materi
+ * "Struktur Atom dan Sistem Periodik Unsur" kelas 10 IPA.
+ *
+ * Aturan 6: "Setiap pergantian giliran, maka terjadi juga pergantian dadu unsur"
+ * → dadu dipakai bergiliran 1 → 2 → 3 → 1 …
+ */
+
+const ELEMENTS = [
+  { z: 1,  sym: 'H',  name: 'Hidrogen',  golongan: 'IA',    periode: 1, konfigurasi: '1' },
+  { z: 2,  sym: 'He', name: 'Helium',    golongan: 'VIIIA', periode: 1, konfigurasi: '2' },
+  { z: 3,  sym: 'Li', name: 'Litium',    golongan: 'IA',    periode: 2, konfigurasi: '2, 1' },
+  { z: 4,  sym: 'Be', name: 'Berilium',  golongan: 'IIA',   periode: 2, konfigurasi: '2, 2' },
+  { z: 5,  sym: 'B',  name: 'Boron',     golongan: 'IIIA',  periode: 2, konfigurasi: '2, 3' },
+  { z: 6,  sym: 'C',  name: 'Karbon',    golongan: 'IVA',   periode: 2, konfigurasi: '2, 4' },
+  { z: 7,  sym: 'N',  name: 'Nitrogen',  golongan: 'VA',    periode: 2, konfigurasi: '2, 5' },
+  { z: 8,  sym: 'O',  name: 'Oksigen',   golongan: 'VIA',   periode: 2, konfigurasi: '2, 6' },
+  { z: 9,  sym: 'F',  name: 'Fluorin',   golongan: 'VIIA',  periode: 2, konfigurasi: '2, 7' },
+  { z: 10, sym: 'Ne', name: 'Neon',      golongan: 'VIIIA', periode: 2, konfigurasi: '2, 8' },
+  { z: 11, sym: 'Na', name: 'Natrium',   golongan: 'IA',    periode: 3, konfigurasi: '2, 8, 1' },
+  { z: 12, sym: 'Mg', name: 'Magnesium', golongan: 'IIA',   periode: 3, konfigurasi: '2, 8, 2' },
+  { z: 13, sym: 'Al', name: 'Aluminium', golongan: 'IIIA',  periode: 3, konfigurasi: '2, 8, 3' },
+  { z: 14, sym: 'Si', name: 'Silikon',   golongan: 'IVA',   periode: 3, konfigurasi: '2, 8, 4' },
+  { z: 15, sym: 'P',  name: 'Fosforus',  golongan: 'VA',    periode: 3, konfigurasi: '2, 8, 5' },
+  { z: 16, sym: 'S',  name: 'Belerang',  golongan: 'VIA',   periode: 3, konfigurasi: '2, 8, 6' },
+  { z: 17, sym: 'Cl', name: 'Klorin',    golongan: 'VIIA',  periode: 3, konfigurasi: '2, 8, 7' },
+  { z: 18, sym: 'Ar', name: 'Argon',     golongan: 'VIIIA', periode: 3, konfigurasi: '2, 8, 8' },
+  { z: 19, sym: 'K',  name: 'Kalium',    golongan: 'IA',    periode: 4, konfigurasi: '2, 8, 8, 1' },
+  { z: 20, sym: 'Ca', name: 'Kalsium',   golongan: 'IIA',   periode: 4, konfigurasi: '2, 8, 8, 2' },
+];
+
+const BY_SYMBOL = Object.fromEntries(ELEMENTS.map((e) => [e.sym, e]));
+
+/** Tiga dadu unsur, 6 sisi tiap dadu. */
+const ELEMENT_DICE = [
+  ['H', 'He', 'Li', 'C', 'N', 'O'],     // dadu unsur 1 — periode 1–2
+  ['F', 'Ne', 'Na', 'Mg', 'Al', 'Si'],  // dadu unsur 2 — periode 2–3
+  ['P', 'S', 'Cl', 'Ar', 'K', 'Ca'],    // dadu unsur 3 — periode 3–4
+];
+
+/** Unsur pada sisi ke-`faceIndex` (0–5) dari dadu unsur ke-`diceIndex` (0–2). */
+function faceElement(diceIndex, faceIndex) {
+  return BY_SYMBOL[ELEMENT_DICE[diceIndex][faceIndex]];
+}
+
+/* ================= js/data/cards.js ================= */
+/**
+ * 20 kartu question + 20 kartu answer (dokumen: "20 kartu answer dan 20 kartu question").
+ *
+ * Tiap pasang punya `skor` yang tercetak di bagian bawah kartu question DAN kartu
+ * answer-nya. Sesuai aturan 9, moderator mencocokkan kedua kartu lewat skor ini.
+ * Karena moderator di aplikasi ini dipegang komputer, pencocokan memakai `id`
+ * pasangan (100% akurat), sedangkan `skor` tetap dipakai sebagai nilai poin
+ * seperti aturan 10.
+ *
+ * Materi: Struktur Atom dan Sistem Periodik Unsur — kelas 10 IPA.
+ */
+
+const CARD_PAIRS = [
+  { id: 1,  skor: 2, q: 'Ilmuwan Yunani yang pertama kali mengemukakan gagasan "atomos", yaitu partikel terkecil yang tidak dapat dibagi lagi.', a: 'Democritus' },
+  { id: 2,  skor: 2, q: 'Model atom berupa bola pejal yang tidak dapat dibagi lagi, dikemukakan tahun 1803 berdasarkan hukum Lavoisier dan hukum Proust.', a: 'Model atom John Dalton' },
+  { id: 3,  skor: 3, q: 'Model atom "roti kismis": bola bermuatan positif dengan elektron tersebar merata di dalamnya.', a: 'Model atom J.J. Thomson' },
+  { id: 4,  skor: 3, q: 'Model atom hasil percobaan penembakan partikel alfa pada lempeng emas tipis (eksperimen Geiger–Marsden).', a: 'Model atom Rutherford' },
+  { id: 5,  skor: 3, q: 'Model atom tahun 1913 dari percobaan spektrum atom hidrogen: elektron mengelilingi inti pada kulit dengan tingkat energi tertentu.', a: 'Model atom Niels Bohr' },
+  { id: 6,  skor: 2, q: 'Partikel penyusun atom yang bermuatan negatif dan ditemukan melalui percobaan tabung sinar katode.', a: 'Elektron' },
+  { id: 7,  skor: 2, q: 'Partikel penyusun inti atom yang bermuatan positif.', a: 'Proton' },
+  { id: 8,  skor: 2, q: 'Partikel penyusun inti atom yang tidak bermuatan (netral), ditemukan oleh James Chadwick.', a: 'Neutron' },
+  { id: 9,  skor: 2, q: 'Jumlah proton di dalam inti sebuah atom disebut …', a: 'Nomor atom (Z)' },
+  { id: 10, skor: 2, q: 'Jumlah proton ditambah jumlah neutron di dalam inti atom disebut …', a: 'Nomor massa (A)' },
+  { id: 11, skor: 3, q: 'Atom-atom unsur sama yang memiliki nomor atom sama tetapi nomor massa berbeda, contoh ¹²C dan ¹⁴C.', a: 'Isotop' },
+  { id: 12, skor: 3, q: 'Atom-atom unsur berbeda yang memiliki nomor massa sama, contoh ¹⁴C dan ¹⁴N.', a: 'Isobar' },
+  { id: 13, skor: 3, q: 'Atom-atom unsur berbeda yang memiliki jumlah neutron sama, contoh ¹³C dan ¹⁴N.', a: 'Isoton' },
+  { id: 14, skor: 3, q: 'Jumlah elektron yang berada pada kulit terluar suatu atom dan menentukan sifat kimianya.', a: 'Elektron valensi' },
+  { id: 15, skor: 2, q: 'Lajur vertikal (kolom) pada tabel periodik; unsur di dalamnya punya elektron valensi sama sehingga sifat kimianya mirip.', a: 'Golongan' },
+  { id: 16, skor: 2, q: 'Lajur horizontal (baris) pada tabel periodik; menyatakan jumlah kulit atom, ada 7 buah pada tabel periodik.', a: 'Periode' },
+  { id: 17, skor: 4, q: 'Pengelompokan unsur menurut kenaikan massa atom, di mana unsur ke-8 memiliki sifat mirip dengan unsur ke-1 (J.A.R. Newlands, 1864).', a: 'Hukum Oktaf Newlands' },
+  { id: 18, skor: 4, q: 'Energi minimum yang diperlukan untuk melepaskan satu elektron dari suatu atom netral dalam wujud gas.', a: 'Energi ionisasi' },
+  { id: 19, skor: 3, q: 'Dalam satu golongan dari atas ke bawah, bagaimana kecenderungan jari-jari atom dan mengapa?', a: 'Semakin besar, karena jumlah kulit bertambah' },
+  { id: 20, skor: 3, q: 'Dalam satu periode dari kiri ke kanan, bagaimana kecenderungan jari-jari atom dan mengapa?', a: 'Semakin kecil, karena muatan inti bertambah sedangkan jumlah kulit tetap' },
+];
+
+/** Membentuk 20 kartu question dari daftar pasangan. */
+function buildQuestionDeck() {
+  return CARD_PAIRS.map((p) => ({ uid: `Q${p.id}`, pairId: p.id, skor: p.skor, teks: p.q, tipe: 'Q' }));
+}
+
+/** Membentuk 20 kartu answer dari daftar pasangan. */
+function buildAnswerDeck() {
+  return CARD_PAIRS.map((p) => ({ uid: `A${p.id}`, pairId: p.id, skor: p.skor, teks: p.a, tipe: 'A' }));
+}
+
+/* ================= js/engine.js ================= */
+/**
+ * Mesin aturan Sciencenopoly.
+ *
+ * Modul ini adalah "moderator komputer": semua pengecekan benar/salah, pembagian
+ * skor, dan urutan giliran yang di papan aslinya dikerjakan seorang moderator
+ * manusia (aturan 1, 8, 9, 10) dijalankan di sini. Tidak ada DOM di file ini
+ * supaya logikanya bisa diuji terpisah dengan `node --test`.
+ *
+ * Nomor aturan pada komentar merujuk ke "ATURAN PERMAINAN SCIENCENOPOLY"
+ * di dokumen penelitian.
+ */
+
+
+
+
+const PLAYER_COLORS = ['#e4572e', '#2e86ab', '#3fa34d', '#b5179e'];
+
+/** Nilai-nilai aturan yang bisa disetel; angka default diambil dari dokumen. */
+const RULES = {
+  KARTU_AWAL: 2,          // aturan 2  — tiap pemain diberi 2 kartu answer
+  BONUS_START: 2,         // aturan 3  — kembali/melewati start
+  BONUS_DADU_UNSUR: 2,    // aturan 5  — +2 poin ATAU +2 langkah
+  LANGKAH_DADU_UNSUR: 2,  // aturan 5
+  PENALTI_SALAH: 3,       // aturan 10.2 — jawaban salah -3
+  BONUS_KARTU_TERBUKA: 1, // aturan 12 — menjawab kartu terbuka moderator +1
+  PENALTI_SISA_ANSWER: 3, // aturan 14 — tiap kartu answer tersisa -3
+  BAYAR_PENJARA: 3,       // simbol 4
+  BAYAR_PESAWAT: 2,       // simbol 8
+  BONUS_TITIK_AMAN: 1,    // simbol titik aman (lihat CATATAN-ATURAN.md)
+  BONUS_PLUS: 2,          // simbol 9
+  BONUS_MINUS: 2,         // simbol 10
+};
+
+/* ------------------------------------------------------------------ acak --- */
+
+/** RNG mulberry32 - dipakai supaya jalannya permainan bisa diulang saat diuji. */
+function makeRng(seed = (Date.now() >>> 0)) {
+  let a = seed >>> 0;
+  return function rng() {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function shuffle(arr, rng) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+  return arr;
+}
+
+const JAWABAN = Object.fromEntries(CARD_PAIRS.map((p) => [p.id, p.a]));
+
+/* ----------------------------------------------------------------- game ---- */
+
+class Game {
+  constructor(names, opts) {
+    const options = opts || {};
+    if (names.length < 2 || names.length > 4) {
+      throw new Error('Sciencenopoly dimainkan oleh 2 sampai 4 pemain (aturan 1).');
+    }
+    this.rng = makeRng(options.seed);
+
+    this.players = names.map((name, i) => ({
+      id: i,
+      name: (name || '').trim() || ('Pemain ' + (i + 1)),
+      color: PLAYER_COLORS[i],
+      pos: 0,
+      score: 0,
+      answers: [],      // kartu answer di tangan
+      questions: [],    // kartu question aktif milik pemain ini (aturan 7 & 11)
+      jail: false,
+      jailProgress: 0,  // jumlah dadu unsur yang sudah dijawab benar di penjara
+      skipNext: false,  // kena efek petak SKIP dari pemain sebelumnya
+      x2: false,        // efek petak x2 (simbol 6) menunggu dipakai
+      finished: false,
+    }));
+
+    this.qDeck = shuffle(buildQuestionDeck(), this.rng);
+    this.aDeck = shuffle(buildAnswerDeck(), this.rng);
+    this.discard = [];
+    this.openQuestions = [];       // aturan 11 - kartu question milik moderator, skor terbuka
+    this.moderatorQuestion = null; // aturan 8  - kartu question yang dibacakan moderator
+
+    this.current = 0;
+    this.direction = 1;            // dibalik oleh petak REVERSE
+    this.turnCount = 0;
+    this.log = [];
+    this.gameOver = false;
+    this.result = null;
+    this.pending = null;
+    this.dice = { normal: null, element: null, elementDiceIndex: 0 };
+    this.turn = null;              // data sementara giliran berjalan
+
+    // aturan 2 - setiap pemain diberikan 2 kartu answer
+    for (const p of this.players) {
+      for (let i = 0; i < RULES.KARTU_AWAL; i++) this._drawAnswer(p, true);
+    }
+    this._say('sistem', 'Permainan dimulai. Setiap pemain menerima ' + RULES.KARTU_AWAL + ' kartu answer (aturan 2).');
+    this._beginTurn();
+  }
+
+  /* --------------------------------------------------------- utilitas ---- */
+
+  get player() { return this.players[this.current]; }
+
+  _say(type, text) { this.log.push({ type: type, text: text, turn: this.turnCount }); }
+
+  /**
+   * Satu-satunya jalan mengubah skor.
+   * `doubleable`: efek x2 (simbol 6) hanya berlaku untuk perolehan skor,
+   * bukan untuk biaya yang dibayar sukarela (penjara / pesawat).
+   */
+  _score(p, delta, reason, doubleable) {
+    const bolehGanda = doubleable !== false;
+    let d = delta;
+    if (bolehGanda && d !== 0 && p.x2) {
+      d *= 2;
+      p.x2 = false;
+      this._say('skor', p.name + ': efek x2 aktif - ' + (delta > 0 ? '+' : '') + delta + ' menjadi ' + (d > 0 ? '+' : '') + d + '.');
+    }
+    p.score += d;
+    if (d !== 0) this._say('skor', p.name + ' ' + (d > 0 ? '+' : '') + d + ' poin (' + reason + '). Total: ' + p.score + '.');
+    return d;
+  }
+
+  _drawAnswer(p, quiet) {
+    if (this.aDeck.length === 0) return null;
+    const card = this.aDeck.pop();
+    p.answers.push(card);
+    if (!quiet) this._say('kartu', p.name + ' mengambil 1 kartu answer.');
+    return card;
+  }
+
+  activePlayers() { return this.players.filter((p) => !p.finished); }
+
+  /** Semua pertanyaan yang boleh diklaim pemain `p`, beserta nilai poinnya. */
+  claimableFor(p) {
+    const out = [];
+    for (const other of this.players) {
+      if (other.id === p.id) continue;
+      for (const q of other.questions) {
+        out.push({ ref: 'p:' + q.uid, card: q, sumber: 'kartu ' + other.name, nilai: q.skor, skorTerbuka: false });
+      }
+    }
+    if (this.moderatorQuestion) {
+      const q = this.moderatorQuestion;
+      out.push({ ref: 'm:' + q.uid, card: q, sumber: 'moderator', nilai: q.skor, skorTerbuka: false });
+    }
+    for (const q of this.openQuestions) {
+      out.push({ ref: 'o:' + q.uid, card: q, sumber: 'meja moderator (skor terbuka)', nilai: RULES.BONUS_KARTU_TERBUKA, skorTerbuka: true });
+    }
+    return out;
+  }
+
+  /* ------------------------------------------------------- alur giliran -- */
+
+  _beginTurn() {
+    if (this.gameOver) return;
+    if (this.activePlayers().length <= 1) {
+      return this._endGame('Tersisa satu pemain yang masih memegang kartu (aturan 16).');
+    }
+    if (this.qDeck.length === 0 || this.aDeck.length === 0) {
+      return this._endGame('Kartu question atau answer sudah habis (aturan 16).');
+    }
+
+    this.turnCount++;
+    // aturan 6 - setiap pergantian giliran, dadu unsur juga berganti
+    this.dice.elementDiceIndex = (this.turnCount - 1) % ELEMENT_DICE.length;
+    this.dice.normal = null;
+    this.dice.element = null;
+
+    const p = this.player;
+
+    // aturan 11 - pertanyaan berlaku sampai giliran jalan kembali ke pemiliknya.
+    // Kartu yang diambil pada giliran sebelumnya (drawnOnTurn < turnCount) berarti
+    // sudah dilewati semua pemain lain tanpa ada yang bisa menjawab.
+    const expired = p.questions.filter((q) => q.drawnOnTurn < this.turnCount);
+    for (const q of expired) {
+      p.questions = p.questions.filter((x) => x.uid !== q.uid);
+      this._score(p, q.skor, 'tidak ada pemain yang bisa menjawab pertanyaannya (aturan 11)');
+      this.openQuestions.push(q);
+      this._say('kartu', 'Kartu question itu diserahkan ke moderator dengan skor terbuka (aturan 11).');
+    }
+
+    this._refreshFinished();
+    if (this.gameOver) return;
+    if (p.finished) { this._nextTurn(); return; }
+
+    // efek petak SKIP dari pemain sebelumnya (simbol 1)
+    if (p.skipNext) {
+      p.skipNext = false;
+      this._say('petak', p.name + ' kehilangan giliran karena pemain sebelumnya menempati petak SKIP (simbol 1).');
+      this._nextTurn();
+      return;
+    }
+
+    // aturan 8 - kalau tidak ada pemain yang memegang kartu question,
+    // moderator mengambil 1 kartu question dan membacakannya.
+    this._maybeModeratorQuestion();
+
+    this.turn = { tileDie: null, planeProgress: 0 };
+    this.pending = { kind: 'handoff', playerId: p.id };
+  }
+
+  _maybeModeratorQuestion() {
+    const adaKartuPemain = this.players.some((p) => p.questions.length > 0);
+    if (!adaKartuPemain && !this.moderatorQuestion && this.qDeck.length > 0) {
+      this.moderatorQuestion = this.qDeck.pop();
+      this._say('moderator', 'Tidak ada pemain yang memegang kartu question, jadi moderator membacakan: "' + this.moderatorQuestion.teks + '" (aturan 8).');
+    }
+  }
+
+  /**
+   * Penjaga: setiap aksi dari UI hanya boleh dijalankan kalau permainan memang
+   * sedang menunggu aksi itu. Tanpa ini, klik ganda / tombol yang ditekan dua
+   * kali bisa memakai `pending` yang sudah berganti.
+   */
+  _menunggu(kind) {
+    return !this.gameOver && !!this.pending && this.pending.kind === kind;
+  }
+
+  /** Dipanggil UI setelah layar serah-terima perangkat ditutup. */
+  ackHandoff() {
+    if (!this._menunggu('handoff')) return;
+    this._openTurnMenu();
+  }
+
+  _openTurnMenu() {
+    const p = this.player;
+    this.pending = {
+      kind: 'turn_menu',
+      playerId: p.id,
+      bisaKlaim: p.answers.length > 0 && this.claimableFor(p).length > 0,
+      diPenjara: p.jail,
+    };
+  }
+
+  /* ------------------------------------------------------------ klaim ---- */
+
+  /** aturan 9 & 12 - pemain menyerahkan kartu answer untuk sebuah pertanyaan. */
+  claim(ref, answerUid) {
+    if (!this._menunggu('turn_menu')) return;
+    const p = this.player;
+    const target = this.claimableFor(p).find((c) => c.ref === ref);
+    const answer = p.answers.find((a) => a.uid === answerUid);
+    if (!target || !answer) return;
+
+    p.answers = p.answers.filter((a) => a.uid !== answerUid);
+    const benar = answer.pairId === target.card.pairId;
+
+    this._say('klaim', p.name + ' menjawab pertanyaan dari ' + target.sumber + ' dengan kartu answer "' + answer.teks + '".');
+
+    if (benar) {
+      // aturan 10.1 - skor sesuai yang tertulis di kartu
+      // aturan 12  - kartu yang sudah dibuka moderator hanya bernilai +1
+      this._say('moderator', 'Moderator mencocokkan skor kedua kartu: SAMA, berarti BENAR (aturan 9).');
+      this._score(p, target.nilai, target.skorTerbuka
+        ? 'menjawab kartu terbuka moderator (aturan 12)'
+        : 'jawaban benar (aturan 10.1)');
+      this._removeQuestion(target);
+      this.discard.push(answer, target.card);
+    } else {
+      // aturan 10.2 - jawaban salah, skor pemain dikurangi 3
+      this._say('moderator', 'Moderator mencocokkan skor kedua kartu: BERBEDA, berarti SALAH (aturan 9). Jawaban yang benar: "' + (JAWABAN[target.card.pairId] || '-') + '".');
+      this._score(p, -RULES.PENALTI_SALAH, 'jawaban salah (aturan 10.2)');
+      this.discard.push(answer);
+    }
+
+    this._refreshFinished();
+    if (this.gameOver) return;
+    this._openTurnMenu();
+  }
+
+  _removeQuestion(target) {
+    const jenis = target.ref.split(':')[0];
+    if (jenis === 'm') this.moderatorQuestion = null;
+    else if (jenis === 'o') this.openQuestions = this.openQuestions.filter((q) => q.uid !== target.card.uid);
+    else for (const pl of this.players) pl.questions = pl.questions.filter((q) => q.uid !== target.card.uid);
+  }
+
+  /* ------------------------------------------------------- dadu & jalan -- */
+
+  /** aturan 5 - lempar 1 dadu normal bersama 1 dadu unsur. */
+  rollDice() {
+    if (!this._menunggu('turn_menu')) return;
+    const p = this.player;
+    if (p.jail) { this._openJail(); return; }
+
+    this.dice.normal = 1 + Math.floor(this.rng() * 6);
+    const face = Math.floor(this.rng() * 6);
+    this.dice.element = BY_SYMBOL[ELEMENT_DICE[this.dice.elementDiceIndex][face]];
+    this._say('dadu', p.name + ' melempar dadu normal = ' + this.dice.normal + ' dan dadu unsur ' + (this.dice.elementDiceIndex + 1) + ' = ' + this.dice.element.sym + '.');
+    this.pending = { kind: 'element_question', ctx: 'giliran', element: this.dice.element };
+  }
+
+  /** Jawaban nomor atom; `nomor` boleh null kalau pemain memilih tidak menjawab. */
+  answerElement(nomor) {
+    if (!this._menunggu('element_question')) return;
+    const p = this.player;
+    const el = this.pending.element;
+    const ctx = this.pending.ctx;
+    const benar = Number(nomor) === el.z;
+    this._say('unsur', benar
+      ? p.name + ' menjawab nomor atom ' + el.sym + ' = ' + el.z + '. BENAR.'
+      : p.name + ' menjawab ' + (nomor === null || nomor === undefined || nomor === '' ? '(tidak menjawab)' : nomor) + ' untuk ' + el.sym + '. SALAH - nomor atom ' + el.sym + ' (' + el.name + ') adalah ' + el.z + '.');
+
+    if (ctx === 'giliran') {
+      // aturan 5 - benar: pilih +2 poin atau +2 langkah.
+      // salah: tidak dapat apa pun DAN tidak ada pengurangan poin.
+      if (benar) {
+        this.pending = { kind: 'element_choice' };
+      } else {
+        this._say('unsur', 'Tidak ada poin dan tidak ada pengurangan (aturan 5).');
+        this._startMove(this.dice.normal);
+      }
+      return;
+    }
+
+    if (ctx === 'plus') { // simbol 9
+      const d = this.turn.tileDie;
+      const didapat = this._score(p, benar ? d + RULES.BONUS_PLUS : d, benar
+        ? 'petak PLUS: dadu ' + d + ' + bonus ' + RULES.BONUS_PLUS + ' (simbol 9)'
+        : 'petak PLUS: dadu ' + d + ' saja (simbol 9)');
+      this.pending = { kind: 'info', text: benar
+        ? 'Benar! Dadu normal ' + d + ' + bonus ' + RULES.BONUS_PLUS + ' = +' + didapat + ' poin.'
+        : 'Salah. Kamu tetap mendapat +' + didapat + ' poin dari angka dadu normal saja.', next: 'end_turn' };
+      return;
+    }
+
+    if (ctx === 'minus') { // simbol 10
+      const d = this.turn.tileDie;
+      const didapat = this._score(p, benar ? RULES.BONUS_MINUS - d : -d, benar
+        ? 'petak MINUS: +' + RULES.BONUS_MINUS + ' lalu -' + d + ' (simbol 10)'
+        : 'petak MINUS: -' + d + ' (simbol 10)');
+      this.pending = { kind: 'info', text: benar
+        ? 'Benar! Bonus +' + RULES.BONUS_MINUS + ' dikurangi dadu normal ' + d + ' = ' + (didapat > 0 ? '+' : '') + didapat + ' poin.'
+        : 'Salah. Kamu kena pengurangan penuh dari angka dadu normal: ' + didapat + ' poin.', next: 'end_turn' };
+      return;
+    }
+
+    if (ctx === 'penjara') { // simbol 4
+      if (!benar) {
+        p.jailProgress = 0;
+        this._say('petak', p.name + ' gagal keluar dari penjara (simbol 4).');
+        this.pending = { kind: 'info', text: 'Gagal keluar dari penjara. Giliranmu selesai.', next: 'end_turn' };
+        return;
+      }
+      p.jailProgress++;
+      if (p.jailProgress >= 2) {
+        p.jail = false;
+        p.jailProgress = 0;
+        this._say('petak', p.name + ' menjawab 2 dadu unsur dan keluar dari penjara (simbol 4).');
+        this.pending = { kind: 'info', text: 'Kamu berhasil keluar dari penjara! Giliranmu selesai.', next: 'end_turn' };
+      } else {
+        this._askElement('penjara', 'Benar! Sekarang jawab dadu unsur kedua untuk keluar penjara.');
+      }
+      return;
+    }
+
+    if (ctx === 'pesawat') { // simbol 8
+      if (!benar) {
+        this.turn.planeProgress = 0;
+        this._say('petak', p.name + ' salah menjawab, jadi tidak jadi naik pesawat (simbol 8).');
+        this.pending = { kind: 'info', text: 'Jawaban salah, kamu tetap di petak pesawat.', next: 'end_turn' };
+        return;
+      }
+      this.turn.planeProgress++;
+      if (this.turn.planeProgress >= 2) this.pending = { kind: 'plane_destination' };
+      else this._askElement('pesawat', 'Benar! Sekarang jawab dadu unsur kedua untuk naik pesawat.');
+      return;
+    }
+  }
+
+  _askElement(ctx, catatan) {
+    const face = Math.floor(this.rng() * 6);
+    const el = BY_SYMBOL[ELEMENT_DICE[this.dice.elementDiceIndex][face]];
+    this.dice.element = el;
+    this.pending = { kind: 'element_question', ctx: ctx, element: el, catatan: catatan };
+  }
+
+  /** aturan 5 - pemain memilih hadiah setelah menjawab dadu unsur dengan benar. */
+  chooseElementReward(pilihan) {
+    if (!this._menunggu('element_choice')) return;
+    const p = this.player;
+    if (pilihan === 'poin') {
+      this._score(p, RULES.BONUS_DADU_UNSUR, 'menjawab dadu unsur dengan benar (aturan 5)');
+      this._startMove(this.dice.normal);
+    } else {
+      this._say('unsur', p.name + ' memilih +' + RULES.LANGKAH_DADU_UNSUR + ' langkah (aturan 5).');
+      this._startMove(this.dice.normal + RULES.LANGKAH_DADU_UNSUR);
+    }
+  }
+
+  _startMove(steps) {
+    const p = this.player;
+    const from = p.pos;
+    const to = (from + steps) % BOARD_SIZE;
+    // aturan 3 - kembali lagi ke start
+    if (from + steps >= BOARD_SIZE) this._score(p, RULES.BONUS_START, 'melewati/kembali ke START (aturan 3)');
+    p.pos = to;
+    this._say('jalan', p.name + ' berjalan ' + steps + ' langkah ke petak ' + (to + 1) + ' (' + BOARD[to] + ').');
+    this.pending = { kind: 'moving', from: from, to: to, steps: steps };
+  }
+
+  /** Dipanggil UI setelah animasi bidak selesai. */
+  ackMove() {
+    if (!this._menunggu('moving')) return;
+    this._resolveTile();
+  }
+
+  /* ------------------------------------------------------------ petak ---- */
+
+  _resolveTile() {
+    const p = this.player;
+    const tile = BOARD[p.pos];
+
+    if (tile === TILE.START) {
+      this.pending = { kind: 'info', text: 'Kamu berhenti tepat di START.', next: 'end_turn' };
+      return;
+    }
+
+    if (tile === TILE.SAFE) {
+      this._score(p, RULES.BONUS_TITIK_AMAN, 'titik aman');
+      this.pending = { kind: 'info', text: 'Titik aman: +' + RULES.BONUS_TITIK_AMAN + ' poin, tidak ada efek buruk.', next: 'end_turn' };
+      return;
+    }
+
+    if (tile === TILE.SKIP) {
+      const next = this.players[this._nextIndex(this.current)];
+      next.skipNext = true;
+      this._say('petak', p.name + ' menempati SKIP, jadi ' + next.name + ' tidak mendapat giliran (simbol 1).');
+      this.pending = { kind: 'info', text: 'Petak SKIP! ' + next.name + ' kehilangan giliran berikutnya.', next: 'end_turn' };
+      return;
+    }
+
+    if (tile === TILE.REVERSE) {
+      this.direction *= -1;
+      this._say('petak', 'Urutan giliran berbalik arah (simbol 5).');
+      this.pending = { kind: 'info', text: 'Petak REVERSE! Urutan giliran sekarang berbalik arah.', next: 'end_turn' };
+      return;
+    }
+
+    if (tile === TILE.X2) {
+      p.x2 = true;
+      this._say('petak', p.name + ' mendapat efek x2 untuk perolehan skor berikutnya (simbol 6).');
+      this.pending = { kind: 'info', text: 'Petak x2! Perolehan skor berikutnya (+ atau -) akan dikali dua.', next: 'end_turn' };
+      return;
+    }
+
+    if (tile === TILE.JAIL) {
+      p.jail = true;
+      p.jailProgress = 0;
+      this._say('petak', p.name + ' masuk penjara (simbol 4).');
+      this.pending = { kind: 'info', text: 'Petak TENGKORAK! Kamu masuk penjara. Giliran berikutnya: bayar 3 poin atau jawab 2 dadu unsur untuk keluar.', next: 'end_turn' };
+      return;
+    }
+
+    if (tile === TILE.ANSWER) {
+      const c = this._drawAnswer(p, false);
+      this.pending = { kind: 'info', text: c
+        ? 'Kamu mengambil kartu answer: "' + c.teks + '" (skor ' + c.skor + ').'
+        : 'Tumpukan kartu answer sudah habis.', next: 'end_turn' };
+      this._checkDecks();
+      return;
+    }
+
+    if (tile === TILE.QUESTION) { this._drawQuestion(); return; }
+
+    if (tile === TILE.SWAP) {
+      const options = this.players
+        .filter((o) => o.id !== p.id && !o.finished)
+        .map((o) => ({ id: o.id, name: o.name, jumlahKartu: o.answers.length + o.questions.length }));
+      this.pending = options.length
+        ? { kind: 'swap_target', options: options }
+        : { kind: 'info', text: 'Petak TUKAR KARTU, tetapi tidak ada pemain lain yang masih memegang kartu.', next: 'end_turn' };
+      return;
+    }
+
+    if (tile === TILE.PLANE) {
+      this.pending = { kind: 'plane_pay', bisaBayar: p.score >= RULES.BAYAR_PESAWAT };
+      return;
+    }
+
+    if (tile === TILE.PLUS) {
+      this.turn.tileDie = 1 + Math.floor(this.rng() * 6);
+      this._say('petak', 'Petak PLUS - ' + p.name + ' melempar ulang dadu normal = ' + this.turn.tileDie + ' (simbol 9).');
+      this._askElement('plus', 'Dadu normal menunjukkan ' + this.turn.tileDie + '. Jawab benar untuk bonus +' + RULES.BONUS_PLUS + '.');
+      return;
+    }
+
+    if (tile === TILE.MINUS) {
+      this.turn.tileDie = 1 + Math.floor(this.rng() * 6);
+      this._say('petak', 'Petak MINUS - ' + p.name + ' melempar ulang dadu normal = ' + this.turn.tileDie + ' (simbol 10).');
+      this._askElement('minus', 'Dadu normal menunjukkan ' + this.turn.tileDie + '. Jawab benar untuk meredam kerugian (+' + RULES.BONUS_MINUS + ').');
+      return;
+    }
+  }
+
+  /** aturan 7 - pemain mengambil kartu question. */
+  _drawQuestion() {
+    const p = this.player;
+    if (this.qDeck.length === 0) {
+      this.pending = { kind: 'info', text: 'Tumpukan kartu question sudah habis.', next: 'end_turn' };
+      this._checkDecks();
+      return;
+    }
+    const card = this.qDeck.pop();
+    this._say('kartu', p.name + ' mengambil 1 kartu question.');
+
+    // aturan 8 - kartu moderator berlaku sampai ada pemain yang mengambil kartu question
+    if (this.moderatorQuestion) {
+      this.discard.push(this.moderatorQuestion);
+      this.moderatorQuestion = null;
+      this._say('moderator', 'Kartu question moderator tidak berlaku lagi (aturan 8).');
+    }
+
+    // aturan 7 - kalau punya kartu answer yang tepat, dia harus menjawabnya sendiri
+    const cocok = p.answers.find((a) => a.pairId === card.pairId);
+    if (cocok) {
+      p.answers = p.answers.filter((a) => a.uid !== cocok.uid);
+      this._score(p, card.skor, 'menjawab sendiri kartu question dengan kartu answer miliknya (aturan 7 & 10.1)');
+      this.discard.push(card, cocok);
+      this.pending = { kind: 'info', text: 'Kartu question: "' + card.teks + '"\n\nKamu punya jawabannya: "' + cocok.teks + '" sehingga langsung +' + card.skor + ' poin (aturan 7).', next: 'end_turn' };
+    } else {
+      card.drawnOnTurn = this.turnCount;
+      p.questions.push(card);
+      this._say('moderator', 'Pertanyaan dibacakan ke seluruh pemain tanpa menyebutkan skornya (aturan 7): "' + card.teks + '"');
+      this.pending = { kind: 'info', text: 'Kartu question: "' + card.teks + '"\n\nKamu tidak punya kartu answer yang cocok, jadi pertanyaan ini dibacakan untuk semua pemain. Kalau sampai giliranmu berikutnya belum ada yang menjawab, skornya (' + card.skor + ') jadi milikmu (aturan 11).', next: 'end_turn' };
+    }
+    this._checkDecks();
+  }
+
+  /** simbol 7 - tukar semua kartu dengan pemain lain. */
+  swapWith(targetId) {
+    if (!this._menunggu('swap_target')) return;
+    const p = this.player;
+    if (targetId !== null && targetId !== undefined) {
+      const t = this.players[targetId];
+      const a = p.answers; p.answers = t.answers; t.answers = a;
+      const q = p.questions; p.questions = t.questions; t.questions = q;
+      this._say('petak', p.name + ' menukar SELURUH kartunya dengan ' + t.name + ' (simbol 7).');
+      this.pending = { kind: 'info', text: 'Semua kartumu ditukar dengan seluruh kartu ' + t.name + '.', next: 'end_turn' };
+    } else {
+      this._say('petak', p.name + ' memilih tidak menukar kartu.');
+      this.pending = { kind: 'info', text: 'Kamu memilih tidak menukar kartu.', next: 'end_turn' };
+    }
+  }
+
+  /** simbol 8 - cara membayar tiket pesawat. */
+  planePay(metode) {
+    if (!this._menunggu('plane_pay')) return;
+    const p = this.player;
+    if (metode === 'poin') {
+      this._score(p, -RULES.BAYAR_PESAWAT, 'membayar tiket pesawat (simbol 8)', false);
+      this.pending = { kind: 'plane_destination' };
+    } else if (metode === 'dadu') {
+      this.turn.planeProgress = 0;
+      this._askElement('pesawat', 'Jawab 2 dadu unsur dengan benar untuk naik pesawat tanpa membayar.');
+    } else {
+      this.pending = { kind: 'info', text: 'Kamu tetap di petak pesawat.', next: 'end_turn' };
+    }
+  }
+
+  planeFlyTo(index) {
+    if (!this._menunggu('plane_destination')) return;
+    const p = this.player;
+    p.pos = ((index % BOARD_SIZE) + BOARD_SIZE) % BOARD_SIZE;
+    this._say('petak', p.name + ' terbang ke petak ' + (p.pos + 1) + ' (' + BOARD[p.pos] + ') (simbol 8).');
+    this._resolveTile(); // efek petak tujuan tetap berlaku
+  }
+
+  /* ----------------------------------------------------------- penjara --- */
+
+  _openJail() {
+    const p = this.player;
+    this.pending = { kind: 'jail', bisaBayar: p.score - RULES.BAYAR_PENJARA >= 0 };
+  }
+
+  jailChoice(pilihan) {
+    if (!this._menunggu('jail')) return;
+    const p = this.player;
+    if (pilihan === 'bayar') {
+      this._score(p, -RULES.BAYAR_PENJARA, 'membayar denda penjara (simbol 4)', false);
+      p.jail = false;
+      p.jailProgress = 0;
+      this.pending = { kind: 'info', text: 'Kamu membayar 3 poin dan keluar dari penjara. Giliranmu selesai.', next: 'end_turn' };
+    } else if (pilihan === 'dadu') {
+      p.jailProgress = 0;
+      this._askElement('penjara', 'Jawab 2 dadu unsur dengan benar untuk keluar dari penjara.');
+    } else {
+      this.pending = { kind: 'info', text: 'Kamu tetap di penjara. Giliranmu selesai.', next: 'end_turn' };
+    }
+  }
+
+  /* ------------------------------------------------ akhir giliran & main - */
+
+  /** Dipanggil UI untuk melanjutkan dari layar informasi. */
+  ack() {
+    if (!this._menunggu('info')) return;
+    const next = this.pending.next;
+    this.pending = null;
+    if (next === 'end_turn') this._endTurn();
+    else this._openTurnMenu();
+  }
+
+  _endTurn() {
+    this._refreshFinished();
+    if (this.gameOver) return;
+    this._nextTurn();
+  }
+
+  _nextIndex(from) {
+    const n = this.players.length;
+    for (let step = 1; step <= n; step++) {
+      const idx = (((from + this.direction * step) % n) + n) % n;
+      if (!this.players[idx].finished) return idx;
+    }
+    return from;
+  }
+
+  _nextTurn() {
+    this.current = this._nextIndex(this.current);
+    this._beginTurn();
+  }
+
+  /** aturan 13 & 15 - pemain selesai kalau tidak memegang kartu apa pun lagi. */
+  _refreshFinished() {
+    for (const p of this.players) {
+      if (!p.finished && p.answers.length === 0 && p.questions.length === 0) {
+        p.finished = true;
+        this._say('sistem', p.name + ' sudah tidak memegang kartu apa pun, jadi selesai bermain (aturan 13 & 15).');
+      }
+    }
+    if (this.activePlayers().length <= 1) {
+      this._endGame('Tersisa satu pemain yang masih memegang kartu (aturan 16).');
+    }
+  }
+
+  _checkDecks() {
+    if (this.qDeck.length === 0 || this.aDeck.length === 0) {
+      this._endGame('Kartu question atau answer sudah habis (aturan 16).');
+    }
+  }
+
+  _endGame(alasan) {
+    if (this.gameOver) return;
+    this.gameOver = true;
+    this._say('sistem', 'Permainan berakhir. ' + alasan);
+
+    // aturan 14 - setiap kartu answer yang tersisa mengurangi poin -3
+    for (const p of this.players) {
+      if (p.answers.length > 0) {
+        const potong = p.answers.length * RULES.PENALTI_SISA_ANSWER;
+        p.score -= potong;
+        this._say('skor', p.name + ' menyisakan ' + p.answers.length + ' kartu answer sehingga -' + potong + ' poin (aturan 14). Total akhir: ' + p.score + '.');
+      }
+    }
+
+    // aturan 16 - pemenang ditentukan dari skor, bukan urutan selesai
+    const peringkat = this.players.slice().sort((a, b) => b.score - a.score);
+    const tertinggi = peringkat[0].score;
+    const juara = peringkat.filter((p) => p.score === tertinggi);
+    this.result = { peringkat: peringkat, juara: juara, alasan: alasan };
+    this._say('sistem', juara.length > 1
+      ? 'Seri! ' + juara.map((p) => p.name).join(' & ') + ' sama-sama mengumpulkan ' + tertinggi + ' poin.'
+      : 'Pemenang: ' + juara[0].name + ' dengan ' + tertinggi + ' poin (aturan 16).');
+    this.pending = { kind: 'game_over' };
+  }
+}
+
+/* ================= js/ui.js ================= */
+/**
+ * Semua fungsi penggambar tampilan. Tidak menyimpan state permainan sendiri —
+ * selalu menggambar ulang dari objek Game yang diberikan.
+ */
+
+
+
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+}
+
+/** Membuat elemen DOM ringkas: el('div', {class:'x'}, 'isi'). */
+function el(tag, attrs, ...kids) {
+  const node = document.createElement(tag);
+  for (const k in (attrs || {})) {
+    if (k === 'class') node.className = attrs[k];
+    else if (k === 'html') node.innerHTML = attrs[k];
+    else if (k.startsWith('on')) node.addEventListener(k.slice(2), attrs[k]);
+    else if (attrs[k] !== null && attrs[k] !== undefined && attrs[k] !== false) node.setAttribute(k, attrs[k]);
+  }
+  for (const kid of kids.flat()) {
+    if (kid === null || kid === undefined || kid === false) continue;
+    node.append(kid.nodeType ? kid : document.createTextNode(kid));
+  }
+  return node;
+}
+
+/* -------------------------------------------------------------- papan --- */
+
+/**
+ * @param override {null|{playerId:number, pos:number}} posisi bidak sementara
+ *        selama animasi jalan, supaya state permainan tidak perlu diutak-atik.
+ */
+function renderBoard(root, game, override) {
+  root.textContent = '';
+  const posisi = (p) => (override && override.playerId === p.id ? override.pos : p.pos);
+
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    const jenis = BOARD[i];
+    const info = TILE_INFO[jenis];
+    const { row, col } = gridPos(i);
+    const sudut = i === 0 || i === 7 || i === 14 || i === 21;
+
+    const tile = el('div', {
+      class: 'tile t-' + info.cls + (sudut ? ' corner' : ''),
+      style: `grid-row:${row};grid-column:${col}`,
+      title: info.label + ' — ' + info.desc,
+      'data-tile': i,
+    },
+      el('span', { class: 'num' }, String(i + 1)),
+      el('span', { class: 'glyph' }, info.icon),
+      el('span', { class: 'name' }, info.label),
+    );
+
+    const disini = game.players.filter((p) => posisi(p) === i);
+    if (disini.length) {
+      tile.append(el('div', { class: 'tokens' }, disini.map((p) => el('span', {
+        class: 'token' + (p.id === game.current && !game.gameOver ? ' now' : ''),
+        style: 'background:' + p.color,
+        title: p.name + (p.jail ? ' (di penjara)' : ''),
+      }))));
+    }
+    root.append(tile);
+  }
+
+  root.append(renderCenter(game));
+}
+
+function renderCenter(game) {
+  const d = game.dice;
+  const wrap = el('div', { class: 'board-center' });
+
+  wrap.append(el('div', { class: 'center-atom' },
+    el('span', { class: 'orbit o1' }), el('span', { class: 'orbit o2' }),
+    el('span', { class: 'orbit o3' }), el('span', { class: 'nucleus' })));
+
+  wrap.append(el('div', { class: 'dice-tray' },
+    el('div', { class: 'die', id: 'die-normal' }, d.normal ? String(d.normal) : '?'),
+    el('div', { class: 'die element', id: 'die-element' }, d.element ? d.element.sym : '?'),
+  ));
+  wrap.append(el('div', { class: 'dice-caption' },
+    'Dadu normal · dadu unsur ' + (d.elementDiceIndex + 1) + '/3'));
+
+  wrap.append(el('div', { class: 'decks' },
+    el('div', { class: 'deck q' }, 'QUESTION', el('small', {}, game.qDeck.length + ' kartu')),
+    el('div', { class: 'deck a' }, 'ANSWER', el('small', {}, game.aDeck.length + ' kartu')),
+  ));
+  return wrap;
+}
+
+/** Papan statis tanpa bidak untuk layar awal — supaya pengunjung langsung
+ *  melihat permainannya, bukan formulir kosong. */
+function renderBoardPreview(root) {
+  root.textContent = '';
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    const info = TILE_INFO[BOARD[i]];
+    const { row, col } = gridPos(i);
+    root.append(el('div', {
+      class: 'tile t-' + info.cls + ([0, 7, 14, 21].includes(i) ? ' corner' : ''),
+      style: `grid-row:${row};grid-column:${col}`,
+      title: info.label + ' — ' + info.desc,
+    },
+      el('span', { class: 'glyph' }, info.icon),
+      el('span', { class: 'name' }, info.label),
+    ));
+  }
+  root.append(el('div', { class: 'board-center' },
+    el('div', { class: 'center-atom' },
+      el('span', { class: 'orbit o1' }), el('span', { class: 'orbit o2' }),
+      el('span', { class: 'orbit o3' }), el('span', { class: 'nucleus' })),
+    el('div', { class: 'decks' },
+      el('div', { class: 'deck q' }, 'QUESTION', el('small', {}, '20 kartu')),
+      el('div', { class: 'deck a' }, 'ANSWER', el('small', {}, '20 kartu')))));
+}
+
+/* ---------------------------------------------------------- papan skor -- */
+
+function renderScoreboard(root, game) {
+  root.textContent = '';
+  for (const p of game.players) {
+    const status = [];
+    status.push(p.answers.length + ' answer');
+    if (p.questions.length) status.push(p.questions.length + ' question');
+    if (p.jail) status.push('di penjara');
+    if (p.x2) status.push('×2 siap');
+    if (p.skipNext) status.push('kena skip');
+    if (p.finished) status.push('selesai');
+
+    root.append(el('li', {
+      class: (p.id === game.current && !game.gameOver ? 'now ' : '') + (p.finished ? 'done' : ''),
+    },
+      el('span', { class: 'sb-dot', style: 'background:' + p.color }),
+      el('span', {},
+        el('span', { class: 'sb-name' }, p.name), el('br'),
+        el('span', { class: 'sb-meta' }, status.join(' · '))),
+      el('span', { class: 'sb-score' }, String(p.score)),
+    ));
+  }
+}
+
+/* ------------------------------------------------------ meja moderator -- */
+
+function renderModerator(root, game) {
+  root.textContent = '';
+  const potong = (t) => (t.length > 130 ? t.slice(0, 130) + '…' : t);
+
+  if (game.moderatorQuestion) {
+    root.append(el('div', { class: 'mod-card' },
+      el('span', { class: 'tag' }, 'Dibacakan moderator'),
+      el('div', {}, potong(game.moderatorQuestion.teks)),
+      el('div', { class: 'sb-meta' }, 'Skor dirahasiakan (aturan 8).')));
+  }
+
+  for (const p of game.players) {
+    for (const q of p.questions) {
+      root.append(el('div', { class: 'mod-card' },
+        el('span', { class: 'tag', style: 'background:' + p.color }, 'Kartu ' + p.name),
+        el('div', {}, potong(q.teks)),
+        el('div', { class: 'sb-meta' }, 'Berlaku sampai giliran ' + p.name + ' kembali (aturan 11).')));
+    }
+  }
+
+  for (const q of game.openQuestions) {
+    root.append(el('div', { class: 'mod-card open' },
+      el('span', { class: 'tag' }, 'Terbuka · +' + RULES.BONUS_KARTU_TERBUKA),
+      el('div', {}, potong(q.teks)),
+      el('div', { class: 'sb-meta' }, 'Skor kartu ' + q.skor + ' sudah terbuka, jadi hanya bernilai +' + RULES.BONUS_KARTU_TERBUKA + ' (aturan 12).')));
+  }
+
+  if (!root.children.length) {
+    root.append(el('div', { class: 'mod-empty' }, 'Belum ada pertanyaan yang beredar.'));
+  }
+}
+
+/* -------------------------------------------------------------- catatan - */
+
+function renderLog(root, game) {
+  root.textContent = '';
+  for (const baris of game.log.slice(-120)) {
+    root.append(el('p', { class: baris.type }, baris.text));
+  }
+  root.scrollTop = root.scrollHeight;
+}
+
+/* ----------------------------------------------------- tabel periodik --- */
+
+const KOLOM = { IA: 1, IIA: 2, IIIA: 13, IVA: 14, VA: 15, VIA: 16, VIIA: 17, VIIIA: 18 };
+const KELAS = { IA: 'g1', IIA: 'g2', VIIIA: 'g8' };
+
+function periodicTableHTML() {
+  const sel = ELEMENTS.map((e) => {
+    const kelas = KELAS[e.golongan] || 'gp';
+    return `<div class="el ${kelas}" style="grid-column:${KOLOM[e.golongan]};grid-row:${e.periode}"
+      title="${esc(e.name)} — golongan ${e.golongan}, periode ${e.periode}, konfigurasi ${e.konfigurasi}">
+      <i>${e.z}</i><b>${e.sym}</b><i>${esc(e.name)}</i></div>`;
+  }).join('');
+
+  return `
+    <h2>Tabel Periodik Unsur (nomor atom 1–20)</h2>
+    <p class="sub">Cakupan materi kelas 10 IPA sekaligus isi ketiga dadu unsur.</p>
+    <div class="pt">${sel}</div>
+    <div class="pt-legend">
+      <div><b>Golongan</b> = lajur tegak, unsur di dalamnya punya elektron valensi sama sehingga sifat kimianya mirip.</div>
+      <div><b>Periode</b> = lajur mendatar, menyatakan banyaknya kulit atom.</div>
+      <div>Dalam satu golongan ke bawah jari-jari atom membesar; dalam satu periode ke kanan jari-jari atom mengecil.</div>
+    </div>`;
+}
+
+/* ------------------------------------------------------------- aturan --- */
+
+function rulesHTML() {
+  const simbol = Object.keys(TILE_INFO)
+    .filter((k) => k !== 'START')
+    .map((k) => {
+      const t = TILE_INFO[k];
+      return `<li><span class="s t-${t.cls}">${t.icon}</span><span><b>${esc(t.label)}</b> — ${esc(t.desc)}</span></li>`;
+    }).join('');
+
+  return `
+    <h2>Cara Bermain Sciencenopoly</h2>
+    <p class="sub">Aturan disalin dari dokumen penelitian; peran moderator dijalankan komputer.</p>
+    <div class="rules">
+      <h3>Aturan permainan</h3>
+      <ol>
+        <li>Dimainkan 2 sampai 4 pemain. Moderator dipegang komputer sehingga semua orang ikut bermain.</li>
+        <li>Sebelum mulai, setiap pemain diberi ${RULES.KARTU_AWAL} kartu answer.</li>
+        <li>Melewati atau kembali ke START memberi +${RULES.BONUS_START} poin.</li>
+        <li>Ada 4 dadu: 1 dadu normal dan 3 dadu unsur.</li>
+        <li>Setiap giliran, pemain melempar 1 dadu normal bersama 1 dadu unsur. Kalau bisa menyebutkan nomor atom pada dadu unsur, pemain memilih +${RULES.BONUS_DADU_UNSUR} poin atau +${RULES.LANGKAH_DADU_UNSUR} langkah. Kalau salah atau tidak menjawab, tidak dapat apa-apa dan tidak ada pengurangan poin.</li>
+        <li>Setiap pergantian giliran, dadu unsur yang dipakai juga berganti.</li>
+        <li>Pemain yang mendapat kartu question harus menjawabnya dengan kartu answer miliknya. Kalau tidak punya yang cocok, pertanyaannya dibacakan ke semua pemain tanpa menyebutkan skor di bawahnya.</li>
+        <li>Kalau tidak ada pemain yang memegang kartu question, moderator mengambil 1 kartu question dan membacakannya tanpa skor. Kartu moderator berlaku sampai ada pemain yang mengambil kartu question.</li>
+        <li>Pemain yang merasa punya kartu answer yang tepat menyerahkan kartunya ke moderator bersama kartu question-nya. Moderator mencocokkan skor di bawah kedua kartu: sama berarti benar, beda berarti salah.</li>
+        <li>Jawaban benar mendapat skor sesuai yang tertulis di kartu; jawaban salah dikurangi ${RULES.PENALTI_SALAH} poin.</li>
+        <li>Pertanyaan seorang pemain berlaku sampai giliran kembali kepadanya. Kalau belum ada yang bisa menjawab, skor pertanyaan itu menjadi miliknya dan kartunya diserahkan ke moderator dengan skor terbuka.</li>
+        <li>Menjawab kartu yang sudah dibuka moderator hanya bernilai +${RULES.BONUS_KARTU_TERBUKA} poin.</li>
+        <li>Pemain yang sudah tidak memegang kartu apa pun selesai bermain, tetapi permainan belum berakhir.</li>
+        <li>Saat permainan berakhir, setiap kartu answer yang masih dipegang mengurangi ${RULES.PENALTI_SISA_ANSWER} poin.</li>
+        <li>Pemain yang kartu answer-nya habis tetapi masih punya kartu question harus menunggu sampai pertanyaannya tidak berlaku lagi atau terjawab pemain lain.</li>
+        <li>Pemenang ditentukan dari skor yang dikumpulkan sampai tersisa satu pemain atau kartu question/answer habis, bukan dari urutan selesai.</li>
+      </ol>
+
+      <h3>Arti simbol di papan</h3>
+      <ul class="sym-list">${simbol}</ul>
+    </div>`;
+}
+
+/* ================= js/main.js ================= */
+/**
+ * Pengendali antarmuka: menyambungkan mesin aturan (engine.js) dengan layar.
+ * Alurnya sederhana — setiap kali state berubah, `render()` dipanggil dan
+ * `game.pending` menentukan tombol apa yang muncul.
+ */
+
+
+
+
+const $ = (sel) => document.querySelector(sel);
+
+const layarSetup = $('#screen-setup');
+const layarGame = $('#screen-game');
+const papan = $('#board');
+const kotakSkor = $('#scoreboard');
+const kotakModerator = $('#moderator');
+const kotakLog = $('#log');
+const kotakAksi = $('#action');
+const labelGiliran = $('#turn-label');
+const overlay = $('#overlay');
+const overlayBox = $('#overlay-box');
+
+let game = null;
+let jumlahPemain = 4;
+let animasi = null;        // {playerId, pos} selama bidak berjalan
+let sedangAnimasi = false;
+
+const tidur = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/* ======================================================== layar setup ==== */
+
+function buildNameInputs() {
+  const wrap = $('#name-inputs');
+  const lama = [...wrap.querySelectorAll('input')].map((i) => i.value);
+  wrap.textContent = '';
+  const contoh = ['Harits', 'Abdan', 'Sari', 'Rian'];
+  for (let i = 0; i < jumlahPemain; i++) {
+    wrap.append(el('div', { class: 'name-row' },
+      el('span', { class: 'dot', style: 'background:' + PLAYER_COLORS[i] }),
+      el('input', {
+        type: 'text', maxlength: '16', value: lama[i] || '',
+        placeholder: 'Pemain ' + (i + 1) + ' (mis. ' + contoh[i] + ')',
+        'aria-label': 'Nama pemain ' + (i + 1),
+      })));
+  }
+}
+
+$('#player-count').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-n]');
+  if (!btn) return;
+  jumlahPemain = Number(btn.dataset.n);
+  for (const b of $('#player-count').children) b.classList.toggle('on', b === btn);
+  buildNameInputs();
+});
+
+$('#btn-start').addEventListener('click', () => {
+  const nama = [...$('#name-inputs').querySelectorAll('input')]
+    .map((i, idx) => i.value.trim() || 'Pemain ' + (idx + 1));
+  game = new Game(nama);
+  animasi = null;
+  layarSetup.classList.add('hidden');
+  layarGame.classList.remove('hidden');
+  render();
+});
+
+$('#btn-quit').addEventListener('click', () => {
+  if (!confirm('Keluar dari permainan yang sedang berjalan?')) return;
+  game = null;
+  tutupOverlay();
+  layarGame.classList.add('hidden');
+  layarSetup.classList.remove('hidden');
+});
+
+for (const btn of document.querySelectorAll('[data-panel]')) {
+  btn.addEventListener('click', () => {
+    const html = btn.dataset.panel === 'rules' ? rulesHTML() : periodicTableHTML();
+    bukaOverlay(html + '<div class="overlay-actions"><button type="button" class="btn" data-close>Tutup</button></div>');
+  });
+}
+
+/* ========================================================== overlay ====== */
+
+function bukaOverlay(html, opsi) {
+  overlayBox.innerHTML = html;
+  overlay.classList.remove('hidden');
+  overlayBox.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', tutupOverlay));
+  if (opsi && opsi.after) opsi.after(overlayBox);
+}
+
+function tutupOverlay() { overlay.classList.add('hidden'); overlayBox.textContent = ''; }
+
+/* =========================================================== render ====== */
+
+function render() {
+  if (!game) return;
+  renderBoard(papan, game, animasi);
+  renderScoreboard(kotakSkor, game);
+  renderModerator(kotakModerator, game);
+  renderLog(kotakLog, game);
+
+  labelGiliran.textContent = game.gameOver
+    ? 'Permainan selesai'
+    : 'Giliran ke-' + game.turnCount + ' · ' + game.player.name +
+      (game.direction === -1 ? ' · arah giliran terbalik' : '');
+
+  if (!sedangAnimasi) renderPending();
+}
+
+/** Panel tindakan di bawah layar. */
+function aksi(nama, pesan, tombol) {
+  kotakAksi.textContent = '';
+  const head = el('div', { class: 'action-head' });
+  if (nama) head.append(el('span', { class: 'action-who' }, nama));
+  if (pesan) head.append(el('span', { class: 'action-msg' }, pesan));
+  kotakAksi.append(el('div', { class: 'action-inner' },
+    head,
+    el('div', { class: 'action-buttons' }, tombol || []),
+  ));
+}
+
+function tombol(teks, kelas, onClick, mati) {
+  return el('button', { type: 'button', class: 'btn ' + (kelas || ''), disabled: mati || null, onclick: onClick }, teks);
+}
+
+/* ------------------------------------------------------ tangan pemain --- */
+
+function kartuTanganHTML(p) {
+  if (!p.answers.length && !p.questions.length) return '<p class="mod-empty">Tidak ada kartu di tangan.</p>';
+  const a = p.answers.map((c) =>
+    `<div class="mod-card"><span class="tag" style="background:var(--krem)">Answer · skor ${c.skor}</span><div>${esc(c.teks)}</div></div>`).join('');
+  const q = p.questions.map((c) =>
+    `<div class="mod-card"><span class="tag">Question milikmu · skor ${c.skor}</span><div>${esc(c.teks)}</div></div>`).join('');
+  return a + q;
+}
+
+/* ========================================================== pending ====== */
+
+function renderPending() {
+  const p = game.pending;
+  if (!p) { aksi('', 'Menunggu…', []); return; }
+
+  switch (p.kind) {
+    case 'handoff': return pendingHandoff();
+    case 'turn_menu': return pendingTurnMenu();
+    case 'element_question': return pendingElement(p);
+    case 'element_choice': return pendingElementChoice();
+    case 'moving': return void jalankanAnimasi(p);
+    case 'info': return pendingInfo(p);
+    case 'jail': return pendingJail(p);
+    case 'swap_target': return pendingSwap(p);
+    case 'plane_pay': return pendingPlanePay(p);
+    case 'plane_destination': return pendingPlaneDestination();
+    case 'game_over': return pendingGameOver();
+  }
+}
+
+/* --------------------------------------------------------- serah terima - */
+
+function pendingHandoff() {
+  const p = game.player;
+  aksi(p.name, 'Serahkan perangkat ke ' + p.name + '.', [
+    tombol('Saya ' + p.name + ', siap', 'primary', () => { tutupOverlay(); game.ackHandoff(); render(); }),
+  ]);
+  bukaOverlay(`
+    <div class="handoff">
+      <div class="big-dot" style="background:${p.color}"></div>
+      <h2>Giliran ${esc(p.name)}</h2>
+      <p class="sub">Serahkan perangkat ke ${esc(p.name)}, lalu tekan tombol di bawah.
+      Kartu pemain lain tidak akan terlihat.</p>
+      <div class="overlay-actions">
+        <button type="button" class="btn primary big" id="ho-ok">Saya ${esc(p.name)}, siap</button>
+      </div>
+    </div>`, {
+    after: (box) => box.querySelector('#ho-ok').addEventListener('click', () => {
+      tutupOverlay(); game.ackHandoff(); render();
+    }),
+  });
+}
+
+/* -------------------------------------------------------- menu giliran -- */
+
+function pendingTurnMenu() {
+  const p = game.player;
+  const bisa = game.claimableFor(p);
+  const btns = [];
+
+  if (p.jail) {
+    btns.push(tombol('Urus penjara', 'warn', () => { game.rollDice(); render(); }));
+  } else {
+    btns.push(tombol('Lempar dadu', 'primary', () => kocokDadu()));
+  }
+
+  btns.push(tombol(
+    'Jawab pertanyaan (' + bisa.length + ')',
+    'info',
+    () => bukaKlaim(),
+    !(p.answers.length && bisa.length),
+  ));
+  btns.push(tombol('Lihat kartuku (' + (p.answers.length + p.questions.length) + ')', 'ghost', () => {
+    bukaOverlay('<h2>Kartu ' + esc(p.name) + '</h2><p class="sub">Hanya kamu yang boleh melihat layar ini.</p>' +
+      '<div class="moderator">' + kartuTanganHTML(p) + '</div>' +
+      '<div class="overlay-actions"><button type="button" class="btn" data-close>Tutup</button></div>');
+  }));
+
+  const pesan = p.jail
+    ? 'Kamu sedang di penjara. Bayar 3 poin atau jawab 2 dadu unsur untuk keluar.'
+    : 'Lempar dadu untuk berjalan, atau jawab pertanyaan yang sedang beredar lebih dulu.';
+  aksi(p.name, pesan, btns);
+}
+
+async function kocokDadu() {
+  sedangAnimasi = true;
+  const dn = $('#die-normal');
+  const de = $('#die-element');
+  if (dn) dn.classList.add('rolling');
+  if (de) de.classList.add('rolling');
+  await tidur(480);
+  sedangAnimasi = false;
+  game.rollDice();
+  render();
+}
+
+/* ------------------------------------------------------------- klaim ---- */
+
+function bukaKlaim() {
+  const p = game.player;
+  const bisa = game.claimableFor(p);
+  let refTerpilih = null;
+  let uidTerpilih = null;
+
+  const daftarQ = bisa.map((c) => `
+    <button type="button" class="choice" data-ref="${esc(c.ref)}">
+      <span class="t">${esc(c.card.teks)}</span>
+      <span class="m">Dari ${esc(c.sumber)} · bernilai +${c.nilai} poin${c.skorTerbuka ? ' (aturan 12)' : ''}</span>
+    </button>`).join('');
+
+  const daftarA = p.answers.map((a) => `
+    <button type="button" class="choice" data-uid="${esc(a.uid)}">
+      <span class="t">${esc(a.teks)}</span>
+      <span class="m">Kartu answer · skor ${a.skor}</span>
+    </button>`).join('');
+
+  bukaOverlay(`
+    <h2>Jawab pertanyaan</h2>
+    <p class="sub">Pilih pertanyaan lalu kartu answer yang menurutmu cocok. Moderator akan mencocokkan
+    keduanya (aturan 9). Benar mendapat skor kartu, salah dikurangi ${RULES.PENALTI_SALAH} poin (aturan 10).</p>
+    <h3 style="font-size:13px;margin-bottom:6px">1. Pertanyaan yang beredar</h3>
+    <div class="choices" id="pilih-q">${daftarQ}</div>
+    <h3 style="font-size:13px;margin-bottom:6px">2. Kartu answer milikmu</h3>
+    <div class="choices" id="pilih-a">${daftarA}</div>
+    <div class="overlay-actions">
+      <button type="button" class="btn ghost" data-close>Batal</button>
+      <button type="button" class="btn primary" id="kirim" disabled>Serahkan ke moderator</button>
+    </div>`, {
+    after: (box) => {
+      const kirim = box.querySelector('#kirim');
+      const pilih = (wrap, attr, set) => {
+        wrap.addEventListener('click', (e) => {
+          const b = e.target.closest('.choice');
+          if (!b) return;
+          wrap.querySelectorAll('.choice').forEach((x) => x.classList.remove('sel'));
+          b.classList.add('sel');
+          set(b.dataset[attr]);
+          kirim.disabled = !(refTerpilih && uidTerpilih);
+        });
+      };
+      pilih(box.querySelector('#pilih-q'), 'ref', (v) => { refTerpilih = v; });
+      pilih(box.querySelector('#pilih-a'), 'uid', (v) => { uidTerpilih = v; });
+      kirim.addEventListener('click', () => {
+        tutupOverlay();
+        game.claim(refTerpilih, uidTerpilih);
+        render();
+      });
+    },
+  });
+}
+
+/* ------------------------------------------------------ pertanyaan unsur */
+
+function pendingElement(p) {
+  const el2 = p.element;
+  aksi(game.player.name, p.catatan || 'Sebutkan nomor atom unsur pada dadu unsur.', []);
+  bukaOverlay(`
+    <h2>Dadu unsur</h2>
+    <p class="sub">${esc(p.catatan || 'Berapa nomor atom unsur ini? Jawaban benar memberi hadiah, jawaban salah tidak mengurangi poin (aturan 5).')}</p>
+    <div class="element-face">
+      <div>
+        <div class="sym">${esc(el2.sym)}</div>
+        <div class="cap">nomor atom?</div>
+      </div>
+    </div>
+    <div class="answer-input">
+      <input id="jwb" type="text" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="?">
+    </div>
+    <div class="keypad">
+      ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<button type="button" data-k="${n}">${n}</button>`).join('')}
+    </div>
+    <div class="overlay-actions">
+      <button type="button" class="btn ghost" id="hapus">Hapus</button>
+      <button type="button" class="btn warn" id="lewat">Tidak tahu</button>
+      <button type="button" class="btn primary" id="jawab">Jawab</button>
+    </div>`, {
+    after: (box) => {
+      const input = box.querySelector('#jwb');
+      input.focus();
+      box.querySelectorAll('[data-k]').forEach((b) => b.addEventListener('click', () => {
+        if (input.value.length < 3) input.value += b.dataset.k;
+      }));
+      box.querySelector('#hapus').addEventListener('click', () => { input.value = ''; input.focus(); });
+      const kirim = (nilai) => { tutupOverlay(); game.answerElement(nilai); render(); };
+      box.querySelector('#jawab').addEventListener('click', () => kirim(input.value === '' ? null : Number(input.value)));
+      box.querySelector('#lewat').addEventListener('click', () => kirim(null));
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') kirim(input.value === '' ? null : Number(input.value));
+      });
+    },
+  });
+}
+
+function pendingElementChoice() {
+  aksi(game.player.name, 'Jawabanmu benar! Pilih hadiahnya (aturan 5).', [
+    tombol('+' + RULES.BONUS_DADU_UNSUR + ' poin', 'primary', () => { game.chooseElementReward('poin'); render(); }),
+    tombol('+' + RULES.LANGKAH_DADU_UNSUR + ' langkah', 'info', () => { game.chooseElementReward('langkah'); render(); }),
+  ]);
+}
+
+/* ------------------------------------------------------------ animasi --- */
+
+async function jalankanAnimasi(p) {
+  if (sedangAnimasi) return;
+  sedangAnimasi = true;
+  const id = game.player.id;
+  aksi(game.player.name, 'Berjalan ' + p.steps + ' langkah…', []);
+  for (let i = 1; i <= p.steps; i++) {
+    animasi = { playerId: id, pos: (p.from + i) % BOARD_SIZE };
+    renderBoard(papan, game, animasi);
+    await tidur(150);
+  }
+  animasi = null;
+  sedangAnimasi = false;
+  game.ackMove();
+  render();
+}
+
+/* --------------------------------------------------------------- info --- */
+
+function pendingInfo(p) {
+  const petak = TILE_INFO[BOARD[game.player.pos]];
+  aksi(game.player.name + ' · ' + petak.icon + ' ' + petak.label, p.text, [
+    tombol('Lanjut', 'primary', () => { game.ack(); render(); }),
+  ]);
+}
+
+/* ------------------------------------------------------------ penjara --- */
+
+function pendingJail(p) {
+  aksi(game.player.name + ' · 💀 Penjara', 'Pilih cara keluar dari penjara (simbol 4).', [
+    tombol('Bayar ' + RULES.BAYAR_PENJARA + ' poin', 'warn', () => { game.jailChoice('bayar'); render(); }, !p.bisaBayar),
+    tombol('Jawab 2 dadu unsur', 'info', () => { game.jailChoice('dadu'); render(); }),
+    tombol('Tetap di penjara', 'ghost', () => { game.jailChoice('tetap'); render(); }),
+  ]);
+}
+
+/* -------------------------------------------------------- tukar kartu --- */
+
+function pendingSwap(p) {
+  aksi(game.player.name + ' · 🔄 Tukar kartu', 'Kamu boleh menukar SELURUH kartumu dengan seluruh kartu satu pemain lain (simbol 7).',
+    p.options.map((o) => tombol(
+      'Tukar dengan ' + o.name + ' (' + o.jumlahKartu + ' kartu)', 'info',
+      () => { game.swapWith(o.id); render(); },
+    )).concat([
+      tombol('Tidak menukar', 'ghost', () => { game.swapWith(null); render(); }),
+    ]));
+}
+
+/* ------------------------------------------------------------ pesawat --- */
+
+function pendingPlanePay(p) {
+  aksi(game.player.name + ' · ✈️ Pesawat', 'Bebas pindah ke petak mana saja, asal membayar ' + RULES.BAYAR_PESAWAT +
+    ' poin atau menjawab 2 dadu unsur dengan benar (simbol 8).', [
+    tombol('Bayar ' + RULES.BAYAR_PESAWAT + ' poin', 'warn', () => { game.planePay('poin'); render(); }, !p.bisaBayar),
+    tombol('Jawab 2 dadu unsur', 'info', () => { game.planePay('dadu'); render(); }),
+    tombol('Tidak jadi terbang', 'ghost', () => { game.planePay('tidak'); render(); }),
+  ]);
+}
+
+function pendingPlaneDestination() {
+  const sekarang = game.player.pos;
+  const sel = [];
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    if (i === sekarang) continue;
+    const info = TILE_INFO[BOARD[i]];
+    sel.push(`<button type="button" data-i="${i}"><span class="g">${info.icon}</span>${i + 1}. ${esc(info.label)}</button>`);
+  }
+  aksi(game.player.name + ' · ✈️ Pesawat', 'Pilih petak tujuan.', []);
+  bukaOverlay(`
+    <h2>Mau terbang ke mana?</h2>
+    <p class="sub">Efek petak tujuan tetap berlaku setelah kamu mendarat.</p>
+    <div class="grid-dest">${sel.join('')}</div>`, {
+    after: (box) => box.querySelectorAll('[data-i]').forEach((b) => b.addEventListener('click', () => {
+      tutupOverlay();
+      game.planeFlyTo(Number(b.dataset.i));
+      render();
+    })),
+  });
+}
+
+/* -------------------------------------------------------------- hasil --- */
+
+function pendingGameOver() {
+  const r = game.result;
+  const medali = ['🥇', '🥈', '🥉', '4.'];
+  const baris = r.peringkat.map((p, i) => `
+    <li class="${r.juara.includes(p) ? 'champ' : ''}">
+      <span class="pos">${medali[i] || (i + 1) + '.'}</span>
+      <span class="sb-dot" style="background:${p.color}"></span>
+      <span><b>${esc(p.name)}</b><br><span class="sb-meta">${p.answers.length} kartu answer tersisa</span></span>
+      <span class="pts">${p.score}</span>
+    </li>`).join('');
+
+  aksi('Permainan selesai', r.alasan, [
+    tombol('Main lagi', 'primary', () => { $('#btn-start').click(); }),
+    tombol('Kembali ke menu', 'ghost', () => {
+      game = null; tutupOverlay();
+      layarGame.classList.add('hidden');
+      layarSetup.classList.remove('hidden');
+    }),
+  ]);
+
+  bukaOverlay(`
+    <h2>Hasil akhir</h2>
+    <p class="sub">${esc(r.alasan)} Pemenang ditentukan dari skor, bukan urutan selesai (aturan 16).</p>
+    <ul class="rank">${baris}</ul>
+    <div class="overlay-actions">
+      <button type="button" class="btn ghost" data-close>Lihat papan</button>
+      <button type="button" class="btn primary" id="ulang">Main lagi</button>
+    </div>`, {
+    after: (box) => box.querySelector('#ulang').addEventListener('click', () => {
+      tutupOverlay(); $('#btn-start').click();
+    }),
+  });
+}
+
+/* ---------------------------------------------------------------- init -- */
+
+buildNameInputs();
+renderBoardPreview($('#board-preview'));
+
+})();
+</script>

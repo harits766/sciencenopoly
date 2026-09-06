@@ -1,0 +1,12 @@
+{
+  "name": "sciencenopoly",
+  "version": "1.0.0",
+  "description": "Media pembelajaran Sciencenopoly - struktur atom & sistem periodik unsur, kelas 10 IPA",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
+    "start": "node build.mjs && node serve.mjs"
+  }
+}
