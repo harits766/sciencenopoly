@@ -99,6 +99,9 @@ serve.mjs               server statis untuk pengembangan
 .github/workflows/      uji + terbitkan otomatis ke GitHub Pages
 ```
 
+Catatan teknis yang lebih rinci — cara mesin aturan dan layar berbicara, serta hal
+yang harus dijaga saat mengubah kode — ada di [ARSITEKTUR.md](ARSITEKTUR.md).
+
 `engine.js` sengaja tidak menyentuh DOM sama sekali, sehingga seluruh aturan bisa
 diuji langsung dengan Node. Setiap aturan dari dokumen punya tesnya sendiri, dan
 `autoplay.mjs` menjalankan 200 permainan acak penuh sambil memastikan jumlah kartu
