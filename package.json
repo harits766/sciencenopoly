@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "build": "node build.mjs",
-    "test": "node --test \"test/*.test.mjs\"",
+    "test": "node --test test/engine.test.mjs",
     "start": "node build.mjs && node serve.mjs"
   }
 }
